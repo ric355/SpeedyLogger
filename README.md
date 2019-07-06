@@ -28,6 +28,7 @@ Supported Pi Models
 ===================
 
 Raspberry Pi 2 (any model)
+
 Raspberry Pi 3 (any model)
 
 Software Installation
@@ -36,6 +37,7 @@ Software Installation
 You do not need a compiler to install the software, as the binaries are already present in this repository in the following location;
 
 source/bin/rpi2
+
 source/bin/rpi3
 
 Obviously, choose the correct folder according to which version of the Pi you have.
@@ -56,17 +58,24 @@ Once up and running, SpeedyLogger will begin logging as soon as it can establish
 1. Connect your Pi to an HDMI monitor and check the console. It should contain a few messages demonstrating that it is up and running and be displaying a few key data values on the screen. These values are displayed for every message received from the Pi.
 2. Look at the status LED on the board; it should be flashing on and off at approximately 250ms intervals (on a RPi2 it's a green LED) if connected, and 100ms intervals if not connected to the Serial 3 port. The flash rate can be a bit inconsistent depending on load as it does not use a hardware timer.
 
-Once connected, SpeedyLogger will start logging data to a log file which will be named 'dl<number>.msl' where <number> is a zero padded number of 6 digits in length. Each time a connection is lost, or the system is restarted, logging will move to the next log file in the sequence. The next log file number is stored in the file "datalog.inf".
+Once connected, SpeedyLogger will start logging data to a log file which will be named 'dl<<number>>.msl' where <<number>> is a zero padded number of 6 digits in length. Each time a connection is lost, or the system is restarted, logging will move to the next log file in the sequence. The next log file number is stored in the file "datalog.inf".
 
 For diagnostic and bench testing purposes the list of log files present on the card can be viewed by connecting to the Pi over a network. Only wired networks are supported at present. Once connected to the network, you will need a telnet client such as puTTY. Telnet to the IP address of your Pi and you will see a command prompt. Type 'help datalog' to see the list of *relevant* commands available (i.e. there are others, but that is beyond the scope of this readme). To find the IP address of your Pi, use the admin pages of your router. The commands available are as follows:
 
 dir - list the files on the card
+
 type <filename>  - dump the file to the screen. If you are logging when you do this, the logging will definitely be interrupted. Use datalog pause first.
+
 datalog pause - pause data logging.
+
 datalog resume - resume logging after a pause.
+
 datalog next - jump to the next datalog in the sequence (e.g. if on dl000006.msl then move to dl000007.msl).
+
 datalog cleanup - delete all log files on the disk except the currently running log
+
 datalog reset - put the datalog number back to 0. This may result in the log file number immediately moving on to number 1 as it usually has the effect of interrupting the serial connection. 
+
 
 Disk usage: To give you some idea of the size of card you need, 1 minute of data is around 85kb but this may vary between installations.
 
