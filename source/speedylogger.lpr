@@ -70,8 +70,9 @@ end;
 
 procedure InitWebServer;
 begin
-  // the web server can be enabled by uncommenting out the call to this function
-  // in the main program further down. Once enabled, you can download the data logs
+  // the web server can be enabled by changing the ini file
+  // see the datalog command on the console.
+  // Once enabled, you can download the data logs
   // via your browser, but you won't be able to download the file that is currently
   // being written to.
   // You obviously need a network connection for this to work, so it's only useful
