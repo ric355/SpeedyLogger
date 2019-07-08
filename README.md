@@ -45,6 +45,10 @@ Software Installation
 
 You do not need a compiler to install the software, as the binaries are already present in this repository in the following location;
 
+source/bin/rpi1
+
+source/bin/zero
+
 source/bin/rpi2
 
 source/bin/rpi3
