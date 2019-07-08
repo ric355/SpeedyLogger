@@ -27,9 +27,18 @@ BEWARE!! The arudino MEGA 2560 which your speeduino is running on uses a 5V sign
 Supported Pi Models
 ===================
 
-Raspberry Pi 2 (any model)
+Raspberry Pi Zero
 
-Raspberry Pi 3 (any model)
+Raspberry Pi 1
+
+Raspberry Pi 2
+
+Raspberry Pi 3
+
+
+I have not been able to extensively test all variations (A / A+ / B etc) so you may have to report an issue if something does not work.
+
+I will add support for Raspberry Pi 4 as soon as Ultibo supports it.
 
 Software Installation
 =====================

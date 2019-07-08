@@ -3,11 +3,25 @@ program SpeedyLogger;
 {$mode objfpc}{$H+}
 
 uses
+  {$ifdef RPI1}
+  RaspberryPi,
+  BCM2835,
+  BCM2708,
+  {$endif}
+  {$ifdef ZERO}
+  RaspberryPi,
+  BCM2835,
+  BCM2708,         {driver for the Raspberry Pi SD host}
+  {$endif}
   {$ifdef RPI2}
   RaspberryPi2,
+  BCM2836,
+  BCM2709,         {driver for the Raspberry Pi SD host}
   {$endif}
   {$ifdef RPI3}
   RaspberryPi3,
+  BCM2837,
+  BCM2710,
   {$endif}
   Platform,
   GlobalConfig,
@@ -19,19 +33,7 @@ uses
   Classes,
   Console,
   strutils,
-  {$ifdef RPI2}
-  BCM2836,
-  {$endif}
-  {$ifdef RPI3}
-  BCM2837,
-  {$endif}
   MMC,             {Include the MMC/SD unit for access to the SD card}
-  {$ifdef RPI2}
-  BCM2709,         {And the driver for the Raspberry Pi SD host}
-  {$endif}
-  {$ifdef RPI3}
-  BCM2710,
-  {$endif}
   HTTP,            {Include the HTTP unit for the server classes}
   Winsock2,        {Include the Winsock2 unit so we can get the IP address}
   FileSystem,      {Include the File system so we have some files to serve up}
