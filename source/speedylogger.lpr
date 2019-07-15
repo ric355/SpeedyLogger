@@ -48,8 +48,18 @@ uses
   speeduinomessagehandler,
   SpeeduinoShell,
   ledthread,
-  inifiles;
+  inifiles
+  {$ifdef graphics}
+  ,
+  gauges,
+  VGShapes,
+  OpenVG,
+  VC4
+  {$endif}
+  ;
 
+const
+   NUM_GAUGES = 15;
 
 var
   WindowHandle : TWindowHandle;
@@ -62,6 +72,17 @@ var
   iniFile : TIniFile;
   webenabled : string;
   xpos, ypos : longword;
+  {$ifdef graphics}
+  Width : Integer;
+  Height : Integer;
+  ShapeColor : TVGShapesColor;
+  runsecs : longint;
+  fps : real;
+  startoffpstime : longint;
+  loopcount : integer;
+  gaugelist : array[1..NUM_GAUGES] of TGauge;
+  {$endif}
+
 
 
 procedure Log(str : string);
@@ -124,13 +145,12 @@ begin
 end;
 
 procedure DebugUpdateMessage;
-var
-  x,y : longword;
+
 begin
   // this function is called from a different thread, so may result in some visual
   // corruption if you also print things out from the main loop, but it is only
   // for debug purposes so it doesn't matter.
-
+  {$ifndef graphics}
   with SpeeduinoMsg.RTStatus do
   begin
     ConsoleWindowWriteEx(WindowHandle, 'secl    : ' + inttostr(secl) + '    ',
@@ -146,23 +166,97 @@ begin
     ConsoleWindowWriteEx(WindowHandle, 'Advance : ' + inttostr(advance) + '    ',
        1, ypos + 5, COLOR_BLACK, COLOR_WHITE);
   end;
-
+  {$endif}
   LED.Rate := 250;
 
 end;
 
 procedure DrawGauges;
+var
+  val : integer;
+  i : integer;
+
 begin
+  {$ifdef graphics}
+  VGShapesStart(Width, Height);
+
+//  VGShapesBackground(0,0,0);
+
+  VGShapesFill(128, 0, 0, 1);
+
+  // paint all of the objects
+  for i := 1 to NUM_GAUGES do
+  begin
+    gaugelist[i].draw;
+  end;
+
+  if (fps > 0) then
+  begin
+    val := trunc(fps);
+    VGShapesTextEnd(Width-100,Height-70, 'fps: ' + inttostr(val),VGShapesSansTypeface,30);
+  end;
+
+  runsecs := trunc(gettickcount / 1000);
+  VGShapesTextEnd(Width-300, Height-70, 'secs: ' + inttostr(runsecs),VGShapesSansTypeface,30);
+
+
+
+  VGShapesEnd;
+  {$endif}
 end;
 
 
 procedure initgraphics;
 
 begin
+  {$ifdef graphics}
+  {Initialize OpenVG and the VGShapes unit}
+  VGShapesInit(Width,Height);
+
+  {Convert the RGB color to use for our shapes into a TVGShapesColor record}
+  VGShapesRGB(202,225,255,Shapecolor);
+
+  gaugelist[1] := TVerticalGauge.Create(100, 50, 50, 300, 0, 250, 100, dtWord);
+  gaugelist[2] := TVerticalGauge.Create(200, 50, 50, 300, 0, 100, 100, dtByte);
+  gaugelist[3] := TVerticalGauge.Create(300, 50, 50, 300, 0, 50, 100, dtByte);
+  gaugelist[4] := THorizontalGauge.Create(400, 50, 150, 50, 0, 1000, 0, dtWord); //loopsLo, dtSwappedWord);
+  gaugelist[5] := TValueGauge.Create(Width - 600, Height - 70, 150, 50, 0, 1000, 0, dtByte);
+
+    gaugelist[6] := TVerticalGauge.Create(100, 400, 50, 300, 0, 250, 100, dtWord);
+    gaugelist[7] := TVerticalGauge.Create(200, 400, 50, 300, 0, 250, 100, dtWord);
+    gaugelist[8] := TVerticalGauge.Create(300, 400, 50, 300, 0, 250, 100, dtWord);
+    gaugelist[9] := TVerticalGauge.Create(400, 400, 50, 300, 0, 250, 100, dtWord);
+    gaugelist[10] := TVerticalGauge.Create(500, 400, 50, 300, 0, 250, 100, dtWord);
+    gaugelist[11] := TVerticalGauge.Create(600, 400, 50, 300, 0, 250, 100, dtWord);
+    gaugelist[12] := TVerticalGauge.Create(700, 400, 50, 300, 0, 250, 100, dtWord);
+    gaugelist[13] := TVerticalGauge.Create(800, 400, 50, 300, 0, 250, 100, dtWord);
+    gaugelist[14] := TVerticalGauge.Create(900, 400, 50, 300, 0, 250, 100, dtWord);
+    gaugelist[15] := TCircularGauge.Create(1000, 400, 120, 0, 250, 100, dtWord);
+
+  {$endif}
 end;
 
 procedure AttachGauges;
 begin
+  {$ifdef graphics}
+  gaugelist[1].AttachValue(@SpeeduinoMsg.rtStatus.maplo);
+  gaugelist[2].AttachValue(@SpeeduinoMsg.rtStatus.ve);
+  gaugelist[3].AttachValue(@SpeeduinoMsg.rtStatus.advance);
+  gaugelist[4].AttachValue(@SpeeduinoMsg.rtStatus.loopslo);
+  gaugelist[5].AttachValue(@SpeeduinoMsg.rtStatus.secl);
+
+  gaugelist[6].AttachValue(@SpeeduinoMsg.rtStatus.maplo);
+  gaugelist[7].AttachValue(@SpeeduinoMsg.rtStatus.maplo);
+  gaugelist[8].AttachValue(@SpeeduinoMsg.rtStatus.maplo);
+  gaugelist[9].AttachValue(@SpeeduinoMsg.rtStatus.maplo);
+  gaugelist[10].AttachValue(@SpeeduinoMsg.rtStatus.maplo);
+  gaugelist[11].AttachValue(@SpeeduinoMsg.rtStatus.maplo);
+  gaugelist[12].AttachValue(@SpeeduinoMsg.rtStatus.maplo);
+  gaugelist[13].AttachValue(@SpeeduinoMsg.rtStatus.maplo);
+  gaugelist[14].AttachValue(@SpeeduinoMsg.rtStatus.maplo);
+  gaugelist[15].AttachValue(@SpeeduinoMsg.rtStatus.maplo);
+
+  {$endif}
 end;
 
 begin
@@ -208,6 +302,12 @@ begin
     SpeeduinoMsg.Request;
     cmd.speedymessage := SpeeduinoMsg;
 
+    {$ifdef graphics}
+    startoffpstime := gettickcount;
+    fps := 0;
+    {$endif}
+
+
     while (not SpeeduinoMsg.Terminated) do
     begin
       drawgauges;
@@ -220,6 +320,17 @@ begin
         SpeeduinoMsg.EndLogging;
         LED.Rate := 100;
       end;
+
+      {$ifdef graphics}
+      loopcount := loopcount + 1;
+      if (loopcount = 40) then
+      begin
+        fps := 40 / ((gettickcount - startoffpstime) / 1000);
+        startoffpstime := gettickcount;
+        loopcount := 0;
+      end;
+
+      {$endif}
 
     end;
 

@@ -161,7 +161,8 @@
       <LinkSmart Value="True"/>
     </Linking>
     <Other>
-      <CustomOptions Value="-dRPI3"/>
+      <CustomOptions Value="-dRPI3
+-dgraphics"/>
       <OtherDefines Count="1">
         <Define0 Value="RPI3"/>
       </OtherDefines>

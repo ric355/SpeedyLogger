@@ -5,7 +5,7 @@ unit gauges;
 interface
 
 uses
-  Classes, SysUtils, VGShapes;
+  Classes, SysUtils, VGShapes, openvg;
 
 type
   TGaugeDataType = (dtByte,
@@ -42,6 +42,10 @@ type
   end;
 
   TCircularGauge = class(TGauge)
+    private
+      fr : longint;
+    public
+    constructor Create(x, y, r, min, max, value : integer; dataType : TGaugeDataType);
     procedure draw; override;
   end;
 
@@ -148,7 +152,7 @@ begin
 
   height := trunc(latestvalue / fmax * fh);
   VGShapesRect(fx, fy, fw, height);
-  VGShapesTextEnd(fx+fw, height + 50, ValueString, VGShapesSansTypeface,30);
+  VGShapesTextEnd(fx+fw, height + 10 + fy, ValueString, VGShapesSansTypeface,30);
 end;
 
 procedure THorizontalGauge.Draw;
@@ -165,21 +169,54 @@ begin
 end;
 
 
+constructor TCircularGauge.Create(x, y, r, min, max, value : integer; dataType : TGaugeDataType);
+begin
+  inherited Create(x, y, r*2, r*2, min, max, value, datatype);
+
+  fr := r;
+end;
+
+
 procedure TCircularGauge.draw;
 var
-  degrees : integer;
-  latestvalue : integer;
+  degrees : VGFloat;
+  latestvalue, height : integer;
+  tx, ty, xpos, ypos : longint;
 begin
-  VGShapesFill(128, 0, 0, 1);
+  VGShapesFill(0, 0, 128, 1);
 
-  VGShapesCircle(fx, fy, fw);
+  VGShapesCircle(fx, fy, fr*2+10);
+
+  VGShapesFill(255, 0, 0, 1);
 
   latestvalue := ValueInt;
 
+
+  degrees := 240 - (trunc(latestvalue / fmax * 300));
+  height := fr;
+
+  xpos := fx;
+  ypos := fy;
+  tx := fx;
+  ty := fy;
+
+  VGShapesTranslate(tx, ty);
+  VGShapesRotate(degrees);
+
+  VGShapesRect(0, -5, fr, 10);
+  VGShapesTextEnd(fr + 10, 0, ValueString, VGShapesSansTypeface,30);
+  VGShapesFill(0,0,0,1);
+  VGShapesCircle(5,0,5);
+
+  VGShapesRotate(-degrees);
+  VGShapesTranslate(-tx, -ty);
+
+
   // convert the value into a number of degrees
 
-  degrees := trunc(latestvalue / fmax * 360);
 
+
+  //VGShapesLine(fx, fy, fx+fw, fy+fh);
 end;
 
 procedure TValueGauge.draw;
