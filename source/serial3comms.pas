@@ -25,6 +25,7 @@ type
     FDeviceCloseRequested : boolean;
     FBytesRead : Longword;
     FUpdateBufferP : pchar;
+    FFirstMessageSent : Boolean;
 
     procedure DeviceOpen;
     procedure DeviceClose;
@@ -48,6 +49,7 @@ type
   protected
     procedure Execute; override;
     procedure OnRecordAvailable(recP : pointer); virtual;
+    procedure OnConnectionEstablished; virtual;
     procedure SetActive(state: boolean);
     procedure RequestDeviceClose;
   published
@@ -121,9 +123,11 @@ procedure TComPortReadThread.DeviceOpen;
 begin
 
   SerialOpen(FConfi.coBaudRate,FConfi.coDataBits,FConfi.coStopBits,FConfi.coParity,FConfi.coFlowControl,0,0);
-
 end;
 
+procedure TComPortReadThread.OnConnectionEstablished;
+begin
+end;
 
 function TComPortReadThread.ReadChar: Char;
 var
@@ -190,6 +194,7 @@ begin
   FBytesRead := 0;
   FRecordBufferP := Getmem(FRecordSize);
   FUpdateBufferP := FRecordBufferP;
+  FFirstMessageSent := False;
 
   FDeviceCloseRequested := False;
 
@@ -209,6 +214,12 @@ begin
          ReadData;
          if (FBytesRead = FRecordSize) then
          begin
+            if (not FFirstMessageSent) then
+            begin
+               OnConnectionEstablished;
+               FFirstMessageSent := True;
+            end;
+
             OnRecordAvailable(FRecordBufferP);
             FBytesRead := 0;
             FUpdateBufferP := FRecordBufferP;

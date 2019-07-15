@@ -78,6 +78,7 @@ type
     procedure request;
     procedure DumpRealTimeData;
     procedure OnRecordAvailable(recP : pointer); override;
+    procedure OnConnectionEstablished; override;
     function MAPValue : integer;
     function VEValue : integer;
     function AdvanceValue : integer;
@@ -93,11 +94,8 @@ type
 implementation
 
 constructor TSpeeduinoMessageHandler.Create;
-
 var
-  row : string;
-  infofile : TextFile;
-
+  infoFile : TextFile;
 begin
   inherited create(SERIAL_3_RECORD_SIZE, true);
 
@@ -112,6 +110,42 @@ begin
 
   FTimeOfLastMessage := FLogStartTime; // this may need to change later
 
+  assignfile(infofile, 'c:\datalog.inf');
+  if (fileexists('c:\datalog.inf')) then
+  begin
+     reset(infofile);
+     readln(infofile, filenumber);
+     closefile(infofile);
+  end;
+
+end;
+
+destructor TSpeeduinoMessageHandler.destroy;
+begin
+  FFileStream.Free;
+  DoneCriticalSection(FStreamCS);
+  inherited destroy;
+end;
+
+procedure TSpeeduinoMessageHandler.OnRecordAvailable(recP : Pointer);
+begin
+  // temporary move until I sort out buffer passing to the thread.
+  move(pchar(recp)^, rtstatus, 76);
+
+  if assigned(screenwriter) then
+     screenwriter;
+
+  DumpRealTimeData;
+  if (Active) then
+     Request;
+end;
+
+procedure TSpeeduinoMessageHandler.OnConnectionEstablished;
+var
+  row : string;
+  infofile : TextFile;
+
+begin
   // we need to work out what filename to use.
   // first, look in the file datalo.inf for the file number
   assignfile(infofile, 'c:\datalog.inf');
@@ -211,26 +245,7 @@ begin
     + #13 + #10;
 
   FFileStream.Write(row[1], length(row));
-end;
 
-destructor TSpeeduinoMessageHandler.destroy;
-begin
-  FFileStream.Free;
-  DoneCriticalSection(FStreamCS);
-  inherited destroy;
-end;
-
-procedure TSpeeduinoMessageHandler.OnRecordAvailable(recP : Pointer);
-begin
-  // temporary move until I sort out buffer passing to the thread.
-  move(pchar(recp)^, rtstatus, 76);
-
-  if assigned(screenwriter) then
-     screenwriter;
-
-  DumpRealTimeData;
-  if (Active) then
-     Request;
 end;
 
 procedure TSpeeduinoMessageHandler.Request;
