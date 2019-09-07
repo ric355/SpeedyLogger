@@ -3,7 +3,7 @@
   <ProjectSession>
     <PathDelim Value="\"/>
     <Version Value="9"/>
-    <BuildModes Count="1" Active="Raspberry Pi 2">
+    <BuildModes Count="1" Active="Raspberry Pi Zero">
       <Item1 Name="Raspberry Pi 2">
         <CompilerOptions>
           <Version Value="11"/>
@@ -42,13 +42,14 @@
         </CompilerOptions>
       </Item1>
     </BuildModes>
-    <Units Count="13">
+    <Units Count="16">
       <Unit0>
         <Filename Value="speedylogger.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="SpeedyLogger"/>
-        <TopLine Value="235"/>
-        <CursorPos X="45" Y="237"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="53"/>
+        <CursorPos X="5" Y="65"/>
         <UsageCount Value="202"/>
         <Loaded Value="True"/>
       </Unit0>
@@ -56,17 +57,16 @@
         <Filename Value="serial3comms.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Serial3Comms"/>
-        <EditorIndex Value="6"/>
-        <TopLine Value="198"/>
-        <CursorPos X="31" Y="208"/>
+        <EditorIndex Value="12"/>
+        <TopLine Value="41"/>
+        <CursorPos X="33" Y="51"/>
         <UsageCount Value="201"/>
         <Loaded Value="True"/>
       </Unit1>
       <Unit2>
         <Filename Value="speeduinomessagehandler.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="11"/>
         <TopLine Value="93"/>
         <CursorPos X="23" Y="98"/>
         <UsageCount Value="201"/>
@@ -75,16 +75,16 @@
       <Unit3>
         <Filename Value="gauges.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="2"/>
-        <TopLine Value="169"/>
-        <CursorPos X="38" Y="179"/>
+        <EditorIndex Value="8"/>
+        <TopLine Value="234"/>
+        <CursorPos X="24" Y="262"/>
         <UsageCount Value="228"/>
         <Loaded Value="True"/>
       </Unit3>
       <Unit4>
         <Filename Value="ledthread.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="7"/>
         <TopLine Value="12"/>
         <CursorPos X="29" Y="22"/>
         <UsageCount Value="203"/>
@@ -97,182 +97,219 @@
         <UsageCount Value="391"/>
       </Unit5>
       <Unit6>
-        <Filename Value="serialthreadrpi2.lpr"/>
-        <UnitName Value="SerialEchoB"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="229"/>
-        <CursorPos X="81" Y="240"/>
-        <UsageCount Value="22"/>
-      </Unit6>
-      <Unit7>
         <Filename Value="speeduinoshell.pas"/>
         <UnitName Value="SpeeduinoShell"/>
-        <EditorIndex Value="3"/>
-        <TopLine Value="116"/>
-        <CursorPos X="52" Y="132"/>
+        <EditorIndex Value="9"/>
+        <TopLine Value="128"/>
+        <CursorPos X="2" Y="80"/>
         <UsageCount Value="114"/>
         <Loaded Value="True"/>
-      </Unit7>
-      <Unit8>
+      </Unit6>
+      <Unit7>
         <Filename Value="C:\Ultibo\Core\fpc\3.1.1\source\rtl\ultibo\core\shell.pas"/>
         <UnitName Value="Shell"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="10"/>
         <TopLine Value="711"/>
         <CursorPos X="23" Y="732"/>
         <UsageCount Value="102"/>
         <Loaded Value="True"/>
-      </Unit8>
-      <Unit9>
+      </Unit7>
+      <Unit8>
         <Filename Value="C:\Ultibo\Core\fpc\3.1.1\source\packages\ultibounits\src\vgshapes.pas"/>
         <UnitName Value="VGShapes"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="1522"/>
-        <CursorPos X="17" Y="1538"/>
-        <UsageCount Value="182"/>
-      </Unit9>
-      <Unit10>
+        <EditorIndex Value="1"/>
+        <TopLine Value="866"/>
+        <CursorPos X="38" Y="874"/>
+        <UsageCount Value="151"/>
+        <Loaded Value="True"/>
+      </Unit8>
+      <Unit9>
         <Filename Value="C:\Ultibo\Core\fpc\3.1.1\source\packages\ultibounits\src\openvg.pas"/>
         <UnitName Value="OpenVG"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="610"/>
-        <CursorPos X="30" Y="629"/>
-        <UsageCount Value="152"/>
-      </Unit10>
-      <Unit11>
+        <EditorIndex Value="5"/>
+        <TopLine Value="360"/>
+        <CursorPos X="9" Y="795"/>
+        <UsageCount Value="121"/>
+        <Loaded Value="True"/>
+      </Unit9>
+      <Unit10>
         <Filename Value="C:\Ultibo\Core\fpc\3.1.1\source\rtl\ultibo\core\platform.pas"/>
         <UnitName Value="Platform"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="13"/>
         <TopLine Value="7859"/>
         <CursorPos X="23" Y="7881"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="164"/>
+        <Loaded Value="True"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="C:\Ultibo\Core\fpc\3.1.1\source\rtl\ultibo\core\globalconst.pas"/>
+        <UnitName Value="GlobalConst"/>
+        <EditorIndex Value="14"/>
+        <TopLine Value="47"/>
+        <CursorPos X="15" Y="64"/>
+        <UsageCount Value="164"/>
         <Loaded Value="True"/>
       </Unit11>
       <Unit12>
-        <Filename Value="C:\Ultibo\Core\fpc\3.1.1\source\rtl\ultibo\core\globalconst.pas"/>
-        <UnitName Value="GlobalConst"/>
-        <EditorIndex Value="8"/>
-        <TopLine Value="47"/>
-        <CursorPos X="15" Y="64"/>
-        <UsageCount Value="10"/>
+        <Filename Value="C:\Ultibo\Core\fpc\3.1.1\source\rtl\ultibo\drivers\pitft28.pas"/>
+        <UnitName Value="PiTFT28"/>
+        <EditorIndex Value="6"/>
+        <TopLine Value="254"/>
+        <CursorPos X="39" Y="300"/>
+        <UsageCount Value="42"/>
         <Loaded Value="True"/>
       </Unit12>
+      <Unit13>
+        <Filename Value="C:\Ultibo\Core\fpc\3.1.1\source\rtl\ultibo\core\font.pas"/>
+        <UnitName Value="Font"/>
+        <EditorIndex Value="4"/>
+        <TopLine Value="334"/>
+        <CursorPos X="14" Y="340"/>
+        <UsageCount Value="41"/>
+        <Loaded Value="True"/>
+      </Unit13>
+      <Unit14>
+        <Filename Value="C:\Ultibo\Core\fpc\3.1.1\source\rtl\ultibo\fonts\Sun_12x22.pas"/>
+        <EditorIndex Value="3"/>
+        <TopLine Value="59"/>
+        <CursorPos X="14" Y="74"/>
+        <UsageCount Value="41"/>
+        <Loaded Value="True"/>
+      </Unit14>
+      <Unit15>
+        <Filename Value="C:\Ultibo\Core\fpc\3.1.1\source\rtl\ultibo\core\vc4.pas"/>
+        <UnitName Value="VC4"/>
+        <EditorIndex Value="2"/>
+        <CursorPos X="20" Y="5"/>
+        <UsageCount Value="41"/>
+        <Loaded Value="True"/>
+      </Unit15>
     </Units>
-    <OtherDefines Count="1">
-      <Define0 Value="RPI2"/>
+    <OtherDefines Count="2">
+      <Define0 Value="ZERO"/>
+      <Define1 Value="lcd"/>
     </OtherDefines>
-    <JumpHistory Count="28" HistoryIndex="27">
+    <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="gauges.pas"/>
-        <Caret Line="197" Column="26" TopLine="179"/>
+        <Filename Value="speedylogger.lpr"/>
+        <Caret Line="226" Column="66" TopLine="211"/>
       </Position1>
       <Position2>
-        <Filename Value="gauges.pas"/>
-        <Caret Line="173" Column="11" TopLine="158"/>
+        <Filename Value="speedylogger.lpr"/>
+        <Caret Line="97" Column="6" TopLine="86"/>
       </Position2>
       <Position3>
-        <Filename Value="gauges.pas"/>
-        <Caret Line="171" Column="53" TopLine="158"/>
+        <Filename Value="speedylogger.lpr"/>
+        <Caret Line="95" Column="13" TopLine="86"/>
       </Position3>
       <Position4>
         <Filename Value="speedylogger.lpr"/>
-        <Caret Line="231" Column="58" TopLine="216"/>
+        <Caret Line="97" Column="6" TopLine="86"/>
       </Position4>
       <Position5>
-        <Filename Value="gauges.pas"/>
-        <Caret Line="183" Column="21" TopLine="173"/>
+        <Filename Value="speedylogger.lpr"/>
+        <Caret Line="98" Column="13" TopLine="86"/>
       </Position5>
       <Position6>
-        <Filename Value="gauges.pas"/>
-        <Caret Line="218" Column="55" TopLine="203"/>
+        <Filename Value="speedylogger.lpr"/>
+        <Caret Line="211" Column="10" TopLine="195"/>
       </Position6>
       <Position7>
-        <Filename Value="gauges.pas"/>
-        <Caret Line="215" Column="39" TopLine="202"/>
+        <Filename Value="speedylogger.lpr"/>
+        <Caret Line="242" Column="30" TopLine="236"/>
       </Position7>
       <Position8>
-        <Filename Value="gauges.pas"/>
-        <Caret Line="214" Column="101" TopLine="199"/>
+        <Filename Value="speedylogger.lpr"/>
+        <Caret Line="97" Column="6" TopLine="86"/>
       </Position8>
       <Position9>
-        <Filename Value="gauges.pas"/>
-        <Caret Line="211" Column="53" TopLine="193"/>
+        <Filename Value="speedylogger.lpr"/>
+        <Caret Line="98" Column="13" TopLine="86"/>
       </Position9>
       <Position10>
         <Filename Value="speedylogger.lpr"/>
-        <Caret Line="236" Column="38" TopLine="222"/>
+        <Caret Line="214" Column="10" TopLine="195"/>
       </Position10>
       <Position11>
-        <Filename Value="serial3comms.pas"/>
-        <Caret Line="81" Column="19" TopLine="217"/>
+        <Filename Value="speedylogger.lpr"/>
+        <Caret Line="216" Column="21" TopLine="197"/>
       </Position11>
       <Position12>
-        <Filename Value="serial3comms.pas"/>
-        <Caret Line="51" Column="24" TopLine="39"/>
+        <Filename Value="speedylogger.lpr"/>
+        <Caret Line="217" Column="46" TopLine="199"/>
       </Position12>
       <Position13>
-        <Filename Value="serial3comms.pas"/>
-        <Caret Line="55" Column="58" TopLine="39"/>
+        <Filename Value="speedylogger.lpr"/>
+        <Caret Line="242" Column="53" TopLine="224"/>
       </Position13>
       <Position14>
-        <Filename Value="serial3comms.pas"/>
-        <Caret Line="159" Column="17" TopLine="140"/>
+        <Filename Value="speedylogger.lpr"/>
+        <Caret Line="407" Column="15" TopLine="388"/>
       </Position14>
       <Position15>
-        <Filename Value="serial3comms.pas"/>
-        <Caret Line="29" Column="25" TopLine="16"/>
+        <Filename Value="speedylogger.lpr"/>
+        <Caret Line="408" Column="8" TopLine="389"/>
       </Position15>
       <Position16>
-        <Filename Value="serial3comms.pas"/>
-        <Caret Line="123" Column="8" TopLine="103"/>
+        <Filename Value="speedylogger.lpr"/>
+        <Caret Line="345" Column="8" TopLine="343"/>
       </Position16>
       <Position17>
-        <Filename Value="C:\Ultibo\Core\fpc\3.1.1\source\rtl\ultibo\core\platform.pas"/>
-        <Caret Line="7877" Column="20" TopLine="7858"/>
+        <Filename Value="speedylogger.lpr"/>
+        <Caret Line="92" Column="8" TopLine="81"/>
       </Position17>
       <Position18>
-        <Filename Value="C:\Ultibo\Core\fpc\3.1.1\source\rtl\ultibo\core\platform.pas"/>
-        <Caret Line="1528" Column="23" TopLine="1515"/>
+        <Filename Value="speedylogger.lpr"/>
+        <Caret Line="261" Column="25" TopLine="253"/>
       </Position18>
       <Position19>
-        <Filename Value="C:\Ultibo\Core\fpc\3.1.1\source\rtl\ultibo\core\platform.pas"/>
-        <Caret Line="804" Column="4" TopLine="791"/>
+        <Filename Value="speedylogger.lpr"/>
+        <Caret Line="267" Column="69" TopLine="250"/>
       </Position19>
       <Position20>
-        <Filename Value="C:\Ultibo\Core\fpc\3.1.1\source\rtl\ultibo\core\platform.pas"/>
-        <Caret Line="1528" Column="19" TopLine="1507"/>
+        <Filename Value="speedylogger.lpr"/>
+        <Caret Line="211" Column="32" TopLine="196"/>
       </Position20>
       <Position21>
-        <Filename Value="C:\Ultibo\Core\fpc\3.1.1\source\rtl\ultibo\core\platform.pas"/>
-        <Caret Line="7875" Column="31" TopLine="7854"/>
+        <Filename Value="gauges.pas"/>
+        <Caret Line="34" TopLine="29"/>
       </Position21>
       <Position22>
-        <Filename Value="C:\Ultibo\Core\fpc\3.1.1\source\rtl\ultibo\core\platform.pas"/>
-        <Caret Line="7877" Column="29" TopLine="7856"/>
+        <Filename Value="gauges.pas"/>
+        <Caret Line="59" Column="14" TopLine="35"/>
       </Position22>
       <Position23>
-        <Filename Value="C:\Ultibo\Core\fpc\3.1.1\source\rtl\ultibo\core\platform.pas"/>
-        <Caret Line="1528" Column="19" TopLine="1515"/>
+        <Filename Value="speedylogger.lpr"/>
+        <Caret Line="201" Column="23" TopLine="187"/>
       </Position23>
       <Position24>
-        <Filename Value="C:\Ultibo\Core\fpc\3.1.1\source\rtl\ultibo\core\platform.pas"/>
-        <Caret Line="7881" Column="23" TopLine="7859"/>
+        <Filename Value="speedylogger.lpr"/>
+        <Caret Line="69" TopLine="54"/>
       </Position24>
       <Position25>
-        <Filename Value="serial3comms.pas"/>
-        <Caret Line="52" Column="38" TopLine="41"/>
+        <Filename Value="speedylogger.lpr"/>
+        <Caret Line="68" TopLine="55"/>
       </Position25>
       <Position26>
-        <Filename Value="serial3comms.pas"/>
-        <Caret Line="51" Column="29" TopLine="41"/>
+        <Filename Value="speedylogger.lpr"/>
+        <Caret Line="161" TopLine="148"/>
       </Position26>
       <Position27>
-        <Filename Value="serial3comms.pas"/>
-        <Caret Line="28" Column="33" TopLine="61"/>
+        <Filename Value="speedylogger.lpr"/>
+        <Caret Line="177" TopLine="164"/>
       </Position27>
       <Position28>
-        <Filename Value="serial3comms.pas"/>
-        <Caret Line="197" Column="30" TopLine="176"/>
+        <Filename Value="speedylogger.lpr"/>
+        <Caret Line="6" Column="43"/>
       </Position28>
+      <Position29>
+        <Filename Value="speedylogger.lpr"/>
+        <Caret Line="67" TopLine="55"/>
+      </Position29>
+      <Position30>
+        <Filename Value="speedylogger.lpr"/>
+        <Caret Line="65" Column="3" TopLine="52"/>
+      </Position30>
     </JumpHistory>
   </ProjectSession>
 </CONFIG>

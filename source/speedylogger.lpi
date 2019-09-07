@@ -32,6 +32,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
+            <OtherUnitFiles Value="C:\Users\Richard\Documents\ultibo\Asphyre-ultibo\Source\"/>
             <UnitOutputDirectory Value="lib\rpizero"/>
           </SearchPaths>
           <CodeGeneration>
@@ -52,9 +53,12 @@
             <LinkSmart Value="True"/>
           </Linking>
           <Other>
-            <CustomOptions Value="-dZERO"/>
-            <OtherDefines Count="1">
+            <CustomOptions Value="-dZERO
+-dlcd
+-dgraphics"/>
+            <OtherDefines Count="2">
               <Define0 Value="ZERO"/>
+              <Define1 Value="lcd"/>
             </OtherDefines>
           </Other>
         </CompilerOptions>
