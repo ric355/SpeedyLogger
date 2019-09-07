@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectSession>
+    <PathDelim Value="\"/>
+    <Version Value="9"/>
+    <BuildModes Count="1" Active="Raspberry Pi Zero">
+      <Item1 Name="Raspberry Pi 2">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="graphicsdev"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir)"/>
+            <UnitOutputDirectory Value="lib\rpi2"/>
+          </SearchPaths>
+          <CodeGeneration>
+            <SmartLinkUnit Value="True"/>
+            <TargetProcessor Value="ARMV7A"/>
+            <TargetController Value="RPI2B"/>
+            <TargetCPU Value="arm"/>
+            <TargetOS Value="ultibo"/>
+            <Optimizations>
+              <OptimizationLevel Value="2"/>
+            </Optimizations>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <GenerateDebugInfo Value="False"/>
+              <UseLineInfoUnit Value="False"/>
+            </Debugging>
+            <LinkSmart Value="True"/>
+          </Linking>
+          <Other>
+            <CustomOptions Value="-dRPI2
+-dgraphics"/>
+            <OtherDefines Count="1">
+              <Define0 Value="RPI2"/>
+            </OtherDefines>
+          </Other>
+        </CompilerOptions>
+      </Item1>
+    </BuildModes>
+    <Units Count="16">
+      <Unit0>
+        <Filename Value="graphicsdev.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="259"/>
+        <CursorPos X="62" Y="247"/>
+        <UsageCount Value="202"/>
+        <Loaded Value="True"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="serial3comms.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Serial3Comms"/>
+        <EditorIndex Value="12"/>
+        <TopLine Value="41"/>
+        <CursorPos X="33" Y="51"/>
+        <UsageCount Value="201"/>
+        <Loaded Value="True"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="speeduinomessagehandler.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="11"/>
+        <TopLine Value="93"/>
+        <CursorPos X="23" Y="98"/>
+        <UsageCount Value="201"/>
+        <Loaded Value="True"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="gauges.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="8"/>
+        <TopLine Value="234"/>
+        <CursorPos X="24" Y="262"/>
+        <UsageCount Value="228"/>
+        <Loaded Value="True"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="ledthread.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="7"/>
+        <TopLine Value="12"/>
+        <CursorPos X="29" Y="22"/>
+        <UsageCount Value="203"/>
+        <Loaded Value="True"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="main.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="391"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="speeduinoshell.pas"/>
+        <UnitName Value="SpeeduinoShell"/>
+        <EditorIndex Value="9"/>
+        <TopLine Value="128"/>
+        <CursorPos X="2" Y="80"/>
+        <UsageCount Value="114"/>
+        <Loaded Value="True"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="C:\Ultibo\Core\fpc\3.1.1\source\rtl\ultibo\core\shell.pas"/>
+        <UnitName Value="Shell"/>
+        <EditorIndex Value="10"/>
+        <TopLine Value="711"/>
+        <CursorPos X="23" Y="732"/>
+        <UsageCount Value="102"/>
+        <Loaded Value="True"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="C:\Ultibo\Core\fpc\3.1.1\source\packages\ultibounits\src\vgshapes.pas"/>
+        <UnitName Value="VGShapes"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="866"/>
+        <CursorPos X="38" Y="874"/>
+        <UsageCount Value="151"/>
+        <Loaded Value="True"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="C:\Ultibo\Core\fpc\3.1.1\source\packages\ultibounits\src\openvg.pas"/>
+        <UnitName Value="OpenVG"/>
+        <EditorIndex Value="5"/>
+        <TopLine Value="360"/>
+        <CursorPos X="9" Y="795"/>
+        <UsageCount Value="121"/>
+        <Loaded Value="True"/>
+      </Unit9>
+      <Unit10>
+        <Filename Value="C:\Ultibo\Core\fpc\3.1.1\source\rtl\ultibo\core\platform.pas"/>
+        <UnitName Value="Platform"/>
+        <EditorIndex Value="13"/>
+        <TopLine Value="7859"/>
+        <CursorPos X="23" Y="7881"/>
+        <UsageCount Value="164"/>
+        <Loaded Value="True"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="C:\Ultibo\Core\fpc\3.1.1\source\rtl\ultibo\core\globalconst.pas"/>
+        <UnitName Value="GlobalConst"/>
+        <EditorIndex Value="14"/>
+        <TopLine Value="47"/>
+        <CursorPos X="15" Y="64"/>
+        <UsageCount Value="164"/>
+        <Loaded Value="True"/>
+      </Unit11>
+      <Unit12>
+        <Filename Value="C:\Ultibo\Core\fpc\3.1.1\source\rtl\ultibo\drivers\pitft28.pas"/>
+        <UnitName Value="PiTFT28"/>
+        <EditorIndex Value="6"/>
+        <TopLine Value="254"/>
+        <CursorPos X="39" Y="300"/>
+        <UsageCount Value="42"/>
+        <Loaded Value="True"/>
+      </Unit12>
+      <Unit13>
+        <Filename Value="C:\Ultibo\Core\fpc\3.1.1\source\rtl\ultibo\core\font.pas"/>
+        <UnitName Value="Font"/>
+        <EditorIndex Value="4"/>
+        <TopLine Value="334"/>
+        <CursorPos X="14" Y="340"/>
+        <UsageCount Value="41"/>
+        <Loaded Value="True"/>
+      </Unit13>
+      <Unit14>
+        <Filename Value="C:\Ultibo\Core\fpc\3.1.1\source\rtl\ultibo\fonts\Sun_12x22.pas"/>
+        <EditorIndex Value="3"/>
+        <TopLine Value="59"/>
+        <CursorPos X="14" Y="74"/>
+        <UsageCount Value="41"/>
+        <Loaded Value="True"/>
+      </Unit14>
+      <Unit15>
+        <Filename Value="C:\Ultibo\Core\fpc\3.1.1\source\rtl\ultibo\core\vc4.pas"/>
+        <UnitName Value="VC4"/>
+        <EditorIndex Value="2"/>
+        <CursorPos X="20" Y="5"/>
+        <UsageCount Value="41"/>
+        <Loaded Value="True"/>
+      </Unit15>
+    </Units>
+    <OtherDefines Count="2">
+      <Define0 Value="ZERO"/>
+      <Define1 Value="lcd"/>
+    </OtherDefines>
+    <JumpHistory Count="4" HistoryIndex="3">
+      <Position1>
+        <Filename Value="C:\Ultibo\Core\fpc\3.1.1\source\packages\ultibounits\src\vgshapes.pas"/>
+        <Caret Line="1627" Column="15" TopLine="1612"/>
+      </Position1>
+      <Position2>
+        <Filename Value="C:\Ultibo\Core\fpc\3.1.1\source\packages\ultibounits\src\vgshapes.pas"/>
+        <Caret Line="91" Column="24" TopLine="80"/>
+      </Position2>
+      <Position3>
+        <Filename Value="gauges.pas"/>
+        <Caret Line="34" TopLine="29"/>
+      </Position3>
+      <Position4>
+        <Filename Value="gauges.pas"/>
+        <Caret Line="59" Column="14" TopLine="35"/>
+      </Position4>
+    </JumpHistory>
+  </ProjectSession>
+</CONFIG>
