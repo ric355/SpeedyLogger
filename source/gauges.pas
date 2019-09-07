@@ -24,12 +24,19 @@ type
     fvalue : integer;
     fmin : integer;
     fmax : integer;
-    function ValueString : String;
+    Fr : Byte;
+    Fg : Byte;
+    Fb : Byte;
+    function ValueString : String; virtual;
     function ValueInt : Integer;
   public
     constructor Create(x, y, w, h, min, max, value : integer; dataType : TGaugeDataType);
     procedure draw; virtual; //(latestvalue : integer);
     procedure AttachValue(dataP : Pointer);
+    procedure SetColour(r, g, b : Byte);
+    property r : byte read Fr write Fr;
+    property g : byte read Fg write Fg;
+    property b : byte read Fb write Fb;
   end;
 
   TVerticalGauge = class(TGauge)
@@ -43,14 +50,24 @@ type
 
   TCircularGauge = class(TGauge)
     private
-      fr : longint;
+      fradius : longint;
     public
-    constructor Create(x, y, r, min, max, value : integer; dataType : TGaugeDataType);
+    constructor Create(x, y, rad, min, max, value : integer; dataType : TGaugeDataType);
     procedure draw; override;
   end;
 
   TValueGauge = class(TGauge)
+  private
+    FFactor : Integer;
+    FFontHeight : Integer;
+    FRightJ : Boolean;
+    function ValueString : String; override;
+  public
+    property fontsize : integer read FFontHeight write ffontheight;
+    property RightJ : boolean read FRightJ write FRightJ;
+    constructor Create(x, y, w, h, min, max, value : integer; dataType : TGaugeDataType; factor : integer; fontheight : integer);
     procedure draw; override;
+    procedure SetFactor(factor : integer);
   end;
 
 implementation
@@ -79,7 +96,7 @@ end;
 
 function TGauge.ValueString : String;
 var
-  a, b : Byte;
+  byteval : Byte;
   w : Word;
 begin
   if (FDataP = nil) then
@@ -91,8 +108,8 @@ begin
   case FDataType of
     dtByte:
        begin
-         b := PByte(FDataP)^;
-         Result := IntToStr(b);
+         byteval := PByte(FDataP)^;
+         Result := IntToStr(byteval);
        end;
 
    dtWord:
@@ -111,7 +128,7 @@ end;
 
 function TGauge.ValueInt : Integer;
 var
-  a, b : Byte;
+  byteval : Byte;
   w : Word;
 begin
   if (FDataP = nil) then
@@ -123,8 +140,8 @@ begin
   case FDataType of
     dtByte:
     begin
-      b := PByte(FDataP)^;
-      Result := b;
+      byteval := PByte(FDataP)^;
+      Result := byteval;
     end;
 
    dtWord:
@@ -139,6 +156,13 @@ begin
    dtString :
       Result := 0;
   end;
+end;
+
+procedure TGauge.SetColour(r, g, b : Byte);
+begin
+  Fr := r;
+  Fg := g;
+  Fb := b;
 end;
 
 procedure TVerticalGauge.Draw;
@@ -160,32 +184,34 @@ var
   width : integer;
   latestvalue : integer;
 begin
-  VGShapesFill(128, 0, 0, 1);
+  VGShapesFill(Fr, Fg, Fb, 1);
+  VGShapesStroke(Fr, Fg, Fb, 1);
   latestvalue := ValueInt;
 
   width := trunc(latestvalue / fmax * fw);
+  VGShapesRectOutline(fx, fy, fw, fh);
   VGShapesRect(fx, fy, width, fh);
-  VGShapesText(fx+width, fy, inttostr(latestvalue), VGShapesSansTypeface,30);
+  //VGShapesText(fx+width, fy, inttostr(latestvalue), VGShapesSansTypeface,30);
 end;
 
 
-constructor TCircularGauge.Create(x, y, r, min, max, value : integer; dataType : TGaugeDataType);
+constructor TCircularGauge.Create(x, y, rad, min, max, value : integer; dataType : TGaugeDataType);
 begin
   inherited Create(x, y, r*2, r*2, min, max, value, datatype);
 
-  fr := r;
+  fradius := r;
 end;
 
 
 procedure TCircularGauge.draw;
 var
   degrees : VGFloat;
-  latestvalue, height : integer;
-  tx, ty, xpos, ypos : longint;
+  latestvalue : integer;
+  tx, ty : longint;
 begin
   VGShapesFill(0, 0, 128, 1);
 
-  VGShapesCircle(fx, fy, fr*2+10);
+  VGShapesCircle(fx, fy, fradius*2+10);
 
   VGShapesFill(255, 0, 0, 1);
 
@@ -193,37 +219,74 @@ begin
 
 
   degrees := 240 - (trunc(latestvalue / fmax * 300));
-  height := fr;
 
-  xpos := fx;
-  ypos := fy;
   tx := fx;
   ty := fy;
 
+  // translate to the origin so we can rotate
   VGShapesTranslate(tx, ty);
   VGShapesRotate(degrees);
 
-  VGShapesRect(0, -5, fr, 10);
-  VGShapesTextEnd(fr + 10, 0, ValueString, VGShapesSansTypeface,30);
+  VGShapesRect(0, -5, fradius, 10);
   VGShapesFill(0,0,0,1);
   VGShapesCircle(5,0,5);
 
+  // can we do another translate rotate here?
+  VGShapesTranslate(fradius + 10, -15);
+  VGShapesRotate(270);
+  VGShapesText(0, 0, ValueString, VGShapesSansTypeface, 30);
+  VGShapesRotate(-270);
+  VGShapesTranslate(-(fradius + 10), 15);
+
+  //restore rotation and translate back to correct position
   VGShapesRotate(-degrees);
   VGShapesTranslate(-tx, -ty);
 
+  //now for kicks we'll make the number rotate on the end of the pointer.
+  {
+  VGShapesTranslate(tx + fradius + 10, ty-15);
+  VGRotate(degrees+90);
+  VGShapesText(0, 0, ValueString, VGShapesSansTypeface,30);
+  VGRotate(-degrees-90);
+  VGShapesTranslate(-(tx + fradius + 10), -(ty-15));  }
+end;
 
-  // convert the value into a number of degrees
-
-
-
-  //VGShapesLine(fx, fy, fx+fw, fy+fh);
+constructor TValueGauge.Create(x, y, w, h, min, max, value : integer; dataType : TGaugeDataType; factor : integer; fontheight : integer);
+begin
+  FFactor := factor;
+  FRightJ := false;
+  FFontHeight := fontheight;
+  inherited Create(x, y, w, h, min, max, value, dataType);
 end;
 
 procedure TValueGauge.draw;
 begin
   VGShapesFill(128, 0, 0, 1);
-  VGShapesText(fx, fy, ValueString, VGShapesSansTypeface,30);
+  if (FRightJ) then
+    VGShapesTextEnd(fx, fy, ValueString, VGShapesSansTypeface,FFontHeight)
+  else
+    VGShapesText(fx, fy, ValueString, VGShapesSansTypeface,FFontHeight);
+end;
+
+procedure TValueGauge.SetFactor(factor : integer);
+begin
+  FFactor := factor;
+end;
+
+function TValueGauge.ValueString : string;
+var
+  rval : real;
+begin
+  if (Ffactor > 0) then
+  begin
+    rval := ValueInt / Ffactor;
+    //Result := FloatToStr(rval);
+    Result := FormatFloat('#0.0', rval);
+  end
+  else
+  begin
+    Result := inherited ValueString;
+  end;
 end;
 
 end.
-
