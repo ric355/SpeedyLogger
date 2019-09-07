@@ -55,6 +55,7 @@ type
   published
     property Terminated;
     property Active: boolean read FActive write SetActive;
+    property IsReceivingData : boolean read FFirstMessageSent;
   end;
 
 

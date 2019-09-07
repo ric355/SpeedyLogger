@@ -9,6 +9,9 @@ uses
   Serial3comms,
   shell;
 
+const
+  BIT_STATUS1_DFCO = 16;     // bit 4 (2^4) in speeduino code this is defined as the bit number.
+
 type
   TRealTimeStatus = record
     response : Char;
@@ -64,12 +67,14 @@ type
     FFileStream : TFileStream;
     baseptr : PChar;
     ptr : PChar;
-    bytecount : integer;
     filenumber : integer;
     FLogStartTime : Integer;
     FPaused : Boolean;
     Ftimeoflastmessage : longint;
     FStreamCS : TRTLCriticalSection;
+  private
+    function GetByteCount : Longint;
+    function GetFilename : string;
   public
     rtStatus : TRealTimeStatus;
     screenwriter : procedure;
@@ -89,6 +94,8 @@ type
     procedure EndLogging;
     property IsPaused : boolean read FPaused;
     property TimeOfLastMessage : Integer read FTimeOfLastMessage;
+    property ByteCount : longint read GetByteCount;
+    property Filename : string read GetFilename;
   end;
 
 implementation
@@ -99,10 +106,10 @@ var
 begin
   inherited create(SERIAL_3_RECORD_SIZE, true);
 
+  FFileStream := nil;
   Config(115200,'N',8,1,0);
   baseptr := @rtStatus;
   ptr := baseptr;
-  bytecount := 0;
   filenumber := 0;
   FLogStartTime := GetTickCount64;
   FPaused := True;
@@ -125,6 +132,31 @@ begin
   FFileStream.Free;
   DoneCriticalSection(FStreamCS);
   inherited destroy;
+end;
+
+function TSpeeduinoMessageHandler.GetFilename : string;
+begin
+  EnterCriticalSection(FStreamCS);
+  try
+  if FFileStream <> nil then
+     Result := FFileStream.FileName
+  else
+     Result := 'Not Logging';
+  finally
+    LeaveCriticalSection(FStreamCS);
+  end;
+end;
+
+function TSpeeduinoMessageHandler.GetByteCount : longint;
+begin
+  Result := 0;
+  try
+    EnterCriticalSection(FStreamCS);
+    if (assigned(FFileStream)) then
+       Result := FFileStream.Position;
+  finally
+    LeaveCriticalSection(FStreamCS);
+  end;
 end;
 
 procedure TSpeeduinoMessageHandler.OnRecordAvailable(recP : Pointer);
