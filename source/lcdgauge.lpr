@@ -3,8 +3,8 @@ program lcdgauge;
 {
 To do list:
 1. Change the processing so that we only draw the page when there is new data from the serial feed.
-Need to think about what happens when there is no serial feed. Suppose just need an initial screen that
-doesn't update thereafter.
+Need to think about what happens when there is no serial feed.
+
 }
 
 
@@ -133,7 +133,10 @@ var
   FrameBufferProperties : TFrameBufferProperties;
   NightMode : Boolean;
   tempval : byte;
-
+  lastbuttonticks : integer;
+  currentbuttonticks : integer;
+  MarkerRequested : boolean;
+  markerrequesttime : longint;
 
 
 
@@ -221,7 +224,8 @@ begin
     //everything we write from here is rotated 90
     //so when we grab the page we can get a 240 wide by 320 tall section
     //and this will match the framebuffer shape. This in turn allows us to
-    //move directly into the framebuffer with a dma transfer.
+    //move directly into the framebuffer with a dma transfer, once the bytes
+    //have been swapped into the correct order.
   end;
 
   if (LCDWriteMode = wmAPI) then
@@ -233,11 +237,6 @@ begin
 
 //  runsecs := trunc(gettickcount / 1000);
 //  VGShapesText(0, Height - 30, 'secs: ' + inttostr(runsecs),VGShapesSansTypeface,30);
-
-//      VGShapesText(20, 100, 'w: ' + inttostr(Width),VGShapesSansTypeface,15);
-//      VGShapesText(20, 150, 'h: ' + inttostr(Height),VGShapesSansTypeface,15);
-//      VGShapesText(20, 180, 'ang: ' + inttostr(angle),VGShapesSansTypeface,15);
-
 
   //simulated afr for development purposes
 
@@ -256,10 +255,12 @@ begin
   else
     SpeeduinoMsg.rtStatus.status1 := SpeeduinoMsg.rtStatus.status1 and (not BIT_STATUS1_DFCO );
 }
-  //pull the real AFR from the status object
+
+
+  //pull the real AFR from the status object, and calculate a y position from it.
   tempafr := round(SpeeduinoMsg.rtStatus.o2 * 0.6);
 
-  //are we all of the way across the page with the diagram yet?
+  //are we all of the way across the page with the graph yet?
   if (AFRDataSize < 319) then
   begin
     if (AFRDataSize = 0) then
@@ -290,7 +291,7 @@ begin
   end
   else
   begin
-    // now we have to start pushing data around to make it scroll.
+    // now we have to start pushing data around and adjusting x values to make it scroll.
     move(AFRGraphCoordinates[2], AFRGraphCoordinates[0], 318 * SizeOf(PathStruct));
     for i := 0 to 317 do
        AFRGraphCoordinates[i].x := AFRGraphCoordinates[i].x - 2;
@@ -305,7 +306,6 @@ begin
   // O2 - this needs to be drawn before the path because we want the path to
   // go over the top of it.
   gaugelist[1].draw;
-
 
   // clear the path and append all of the data onto it. This makes the line start
   // to build up on the screen from the left hand side.
@@ -330,25 +330,26 @@ begin
      VGShapesText(20, 220, formatfloat('###.##', SpeeduinoMsg.ByteCount/1024/1024)+' Mb',VGShapesSansTypeface,15)
   else
      VGShapesText(20, 220, '0.0 Mb',VGShapesSansTypeface,15);
-  //write the name of the lof file
 
-
+  // FPS
   VGShapesText(220, 20, 'fps: ', VGShapesSansTypeface, 15);
+  gaugelist[2].draw;
 
- // FPS
- gaugelist[2].draw;
+  // RPM
+  gaugelist[3].draw;
 
- // RPM
- gaugelist[3].draw;
+  if (NightMode) then
+    gaugelist[4].SetColour(128, 128, 0)
+  else
+    gaugelist[4].SetColour(0, 128, 0);
 
- if (NightMode) then
-   gaugelist[4].SetColour(128, 128, 0)
- else
-   gaugelist[4].SetColour(0, 128, 0);
- gaugelist[4].draw;
+  // TPS
+  gaugelist[4].draw;
 
- VGShapesText(20, 205, SpeeduinoMsg.Filename, VGShapesSansTypeface, 8);
+  // current log file name
+  VGShapesText(20, 205, SpeeduinoMsg.Filename, VGShapesSansTypeface, 8);
 
+  // data logging indicator
   if (SpeeduinoMsg.IsPaused) then
   begin
      VGShapesStroke(255, 0, 0, 1);
@@ -361,7 +362,7 @@ begin
      VGShapesCircle(300, 225, 15);
   end;
 
-  //DFCO indicator (blue daytime, blue with yellow outline nighttime
+  //DFCO indicator (blue daytime, blue with yellow outline nighttime)
   if (NightMode) then
   begin
    if (SpeeduinoMsg.rtStatus.status1 and BIT_STATUS1_DFCO) = BIT_STATUS1_DFCO then
@@ -391,7 +392,14 @@ begin
     end;
   end;
 
+  if (MarkerRequested) and ((gettickcount - markerrequesttime) < 1000) then
+  begin
+    VGShapesText(150, 220, 'M', VGShapesSansTypeface, 15);
+  end
+  else
+     MarkerRequested := False;
 
+  // clean up
   vgtranslate(320,0);
   vgrotate(0);
   VGShapesEnd;
@@ -400,7 +408,7 @@ begin
      VGReadPixels(@buf2[0,0], 320*4, VG_sARGB_8888, 0, 0, 320, 240)
   else
   begin
-      // the framebuffer write must be byte swapped before it can be dma transferred
+      // the framebuffer data must be byte swapped before it can be dma transferred
       // unfortunately this slows down the frame rate a little bit but it is not too
       // much of an impact.
       VGReadPixels(@newbuf[0], 240*2, VG_sRGB_565, 0, 0, 240, 320);
@@ -422,13 +430,17 @@ begin
 
   NightMode := False;
 
+  //
   gaugelist[1] := TValueGauge.Create(300, 80, 300, 160, 0, 200, 15, dtByte, 10, 100);
   TValueGauge(gaugelist[1]).RightJ := true;
 
+  //FPS (will be removed eventually)
   gaugelist[2] := TValueGauge.Create(280, 20, 50, 20, 0, 100, 0, dtByte, 0, 15);
 
+  //RPM
   gaugelist[3] := TValueGauge.Create(200, 220, 50, 20, 0, 100, 0, dtWord, 0, 15);
 
+  //TPS %
   gaugelist[4] := THorizontalGauge.Create(20, 20, 140, 15, 0, 100, 0, dtByte);
 
   //Create a path for the updating AFR graph
@@ -437,6 +449,8 @@ begin
 
   vgSetf(VG_STROKE_LINE_WIDTH, 2);
 
+  // set up stroke data for the chart. Only needs to be done once, then the data
+  // values can be shifted around to make the chart scroll sideways.
   for i := 0 to 319 do
   begin
     AFRGraphCommands[i*2] := VG_MOVE_TO;
@@ -446,11 +460,14 @@ end;
 
 procedure RebootButton(Data : Pointer; Pin, Trigger : LongWord);
 begin
+ // reboot the logger. Really only for development purposes when wanting to
+ // restart the firmware after updating.
  SystemRestart(100);
 end;
 
 procedure startstoplogging(data : Pointer; pin, trigger : longword);
 begin
+ // Toggle the logging state.
   if (SpeeduinoMsg.IsPaused) then
      SpeeduinoMsg.ResumeLogging
   else
@@ -462,15 +479,27 @@ end;
 
 procedure nightmodetoggle(Data : Pointer; pin, trigger : longword);
 begin
+   // toggle night mode, to reduce glare when it's dark.
    NightMode := not NightMode;
    sleep(500);
    GPIOInputEvent(GPIO_PIN_27,GPIO_TRIGGER_LOW,INFINITE,@nightmodetoggle,nil);
 end;
 
-procedure smallerfont(Data : Pointer; pin, trigger : longword);
+procedure addlogfilemarker(Data : Pointer; pin, trigger : longword);
 begin
-  sleep(500);
-   GPIOInputEvent(GPIO_PIN_23,GPIO_TRIGGER_LOW,INFINITE,@smallerfont,nil);
+  // add a marker to the log file, so it shows in megalogviewer.
+  currentbuttonticks := gettickcount;
+  if ((currentbuttonticks - lastbuttonticks) > 500) then
+  begin
+     // we have detected a button press that is at least 500ms after the last one (debounce)
+     lastbuttonticks := currentbuttonticks;
+     if (Assigned(SpeeduinoMsg)) then
+        SpeeduinoMsg.RequestMarker;
+     MarkerRequested := True;
+     markerrequesttime := currentbuttonticks;
+  end;
+
+  GPIOInputEvent(GPIO_PIN_23,GPIO_TRIGGER_LOW,INFINITE,@addlogfilemarker,nil);
 end;
 
 procedure initlcdstuff;
@@ -495,11 +524,12 @@ begin
   end;
 
 
-  //adjust font size buttons
+  //add log file marker button (second from top button)
   GPIOPullSelect(GPIO_PIN_23,GPIO_PULL_UP);
   GPIOFunctionSelect(GPIO_PIN_23,GPIO_FUNCTION_IN);
-  GPIOInputEvent(GPIO_PIN_23,GPIO_TRIGGER_LOW,INFINITE,@smallerfont,nil);
+  GPIOInputEvent(GPIO_PIN_23,GPIO_TRIGGER_LOW,INFINITE,@addlogfilemarker,nil);
 
+  // night mode toggle button (top button)
   GPIOPullSelect(GPIO_PIN_27,GPIO_PULL_UP);
   GPIOFunctionSelect(GPIO_PIN_27,GPIO_FUNCTION_IN);
   GPIOInputEvent(GPIO_PIN_27,GPIO_TRIGGER_LOW,INFINITE,@nightmodetoggle,nil);
@@ -508,11 +538,16 @@ begin
   GPIOPullSelect(GPIO_PIN_17,GPIO_PULL_UP);
   GPIOFunctionSelect(GPIO_PIN_17,GPIO_FUNCTION_IN);
   GPIOInputEvent(GPIO_PIN_17,GPIO_TRIGGER_LOW,INFINITE,@startstoplogging,nil);
+
+  //pin 22 is a reboot button (second button from bottom)
+  GPIOPullSelect(GPIO_PIN_22,GPIO_PULL_UP);
+  GPIOFunctionSelect(GPIO_PIN_22,GPIO_FUNCTION_IN);
+  GPIOInputEvent(GPIO_PIN_22,GPIO_TRIGGER_LOW,INFINITE,@RebootButton,nil);
+
 end;
 
 procedure AttachGauges;
 begin
-  //gaugelist[1].AttachValue(@tempafr);
   gaugelist[1].AttachValue(@SpeeduinoMsg.rtStatus.o2);
   gaugelist[2].AttachValue(@fps);
   gaugelist[3].AttachValue(@SpeeduinoMsg.rtStatus.rpmlo);
@@ -521,6 +556,8 @@ end;
 
 procedure updatelcd;
 begin
+  // we are using the wmframebuffer mode as this is now perfected. The other mode is left in for backup
+
   if (LCDWriteMode = wmFrameBuffer) then
      FramebufferDeviceWrite(FramebufferDevice, 0, 0, @newbuf[0], 320*240, FRAMEBUFFER_TRANSFER_DMA)
   else
@@ -562,24 +599,28 @@ begin
    end;
   Log('File system is ready');
 
+  // open the ini file and check the configuration
+  // this will be expanded in due course to add gauge positions, pages etc.
+
   iniFile := TIniFile.Create('c:\speedylog.ini');
   webenabled := iniFile.ReadString('webserver', 'enabled', '0');
   if (webenabled = '1') then
     initwebserver;
 
-  ConsoleWindowGetCursorXY(WindowHandle, xpos, ypos);
+  //ConsoleWindowGetCursorXY(WindowHandle, xpos, ypos);
   fps := 0;
   tempafr := 0;
 
-  //setup a reboot button
-  GPIOPullSelect(GPIO_PIN_22,GPIO_PULL_UP);
-  GPIOFunctionSelect(GPIO_PIN_22,GPIO_FUNCTION_IN);
-  GPIOInputEvent(GPIO_PIN_22,GPIO_TRIGGER_LOW,INFINITE,@RebootButton,nil);
-
+  // we loop forever; this loop steps forward when connection is lost, at
+  // which point we create a new message handler object
 
   while true do
   begin
+    currentbuttonticks := 0;
+    lastbuttonticks := 0;
     loopcount := 0;
+    MarkerRequested := False;
+    markerrequesttime := 0;
 
     //create the handler thread
 
@@ -587,10 +628,10 @@ begin
 
     AttachGauges;
 
-    //uncomment this line if you want to see data on the console. You
-    //can change what is printed (per message) in the function itself. See the
-    //TRealTimeStatus structure
+    // no consonle output for this implementation.
     SpeeduinoMsg.screenwriter := nil;
+
+    //kick off the thread.
     SpeeduinoMsg.Active := True;
     SpeeduinoMsg.Start;
 
@@ -600,16 +641,22 @@ begin
     SpeeduinoMsg.Request;
     cmd.speedymessage := SpeeduinoMsg;
 
+    // initialize the o2 reading to a default value so that we don't get 0.0 on the screen
     SpeeduinoMsg.rtStatus.o2:=133;
 
     startoffpstime := gettickcount;
 
+    // the message handler thread terminates when logging is stopped either via
+    // lost connection or via the start/stop button.
 
     while (not SpeeduinoMsg.Terminated) do
     begin
+      // this writes the guages into the video memory on the GPU
+      // if conneced via hdmi they will display at this point without any further processing,
+      // with the exception that they will be rotated (see comments in the function)
       drawgauges;
 
-      // in case the connection is dropped, we have a 1s timeout.
+      // in case the connection is dropped, we have a 2s timeout.
       // this needs testing for when tunerstudio is connected via usb, as that causes a reset on the arduino.
 
       if (SpeeduinoMsg.timeoflastmessage < (gettickcount - 2000)) and (not SpeeduinoMsg.IsPaused) then
@@ -618,6 +665,7 @@ begin
         LED.Rate := 100;
       end;
 
+      // fps calcs are development only, really.
       loopcount := loopcount + 1;
       if (loopcount = 5) then
       begin
@@ -626,6 +674,7 @@ begin
         loopcount := 0;
       end;
 
+      // this copies the graphics from the GPU to the framebuffer.
       updatelcd;
     end;
 

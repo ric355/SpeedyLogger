@@ -42,13 +42,13 @@
         </CompilerOptions>
       </Item1>
     </BuildModes>
-    <Units Count="27">
+    <Units Count="20">
       <Unit0>
         <Filename Value="lcdgauge.lpr"/>
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
-        <TopLine Value="121"/>
-        <CursorPos X="3" Y="135"/>
+        <TopLine Value="480"/>
+        <CursorPos X="46" Y="502"/>
         <UsageCount Value="202"/>
         <Loaded Value="True"/>
       </Unit0>
@@ -57,17 +57,17 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="Serial3Comms"/>
         <EditorIndex Value="4"/>
-        <TopLine Value="42"/>
-        <CursorPos X="39" Y="58"/>
+        <TopLine Value="171"/>
+        <CursorPos X="24" Y="184"/>
         <UsageCount Value="201"/>
         <Loaded Value="True"/>
       </Unit1>
       <Unit2>
         <Filename Value="speeduinomessagehandler.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="3"/>
-        <TopLine Value="62"/>
-        <CursorPos X="34" Y="20"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="343"/>
+        <CursorPos X="25" Y="361"/>
         <UsageCount Value="201"/>
         <Loaded Value="True"/>
       </Unit2>
@@ -75,8 +75,8 @@
         <Filename Value="gauges.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="5"/>
-        <TopLine Value="101"/>
-        <CursorPos X="20" Y="85"/>
+        <TopLine Value="4"/>
+        <CursorPos X="13" Y="18"/>
         <UsageCount Value="228"/>
         <Loaded Value="True"/>
       </Unit3>
@@ -97,9 +97,9 @@
       <Unit6>
         <Filename Value="initoverrides.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="2"/>
         <CursorPos X="15" Y="8"/>
-        <UsageCount Value="76"/>
+        <UsageCount Value="301"/>
         <Loaded Value="True"/>
       </Unit6>
       <Unit7>
@@ -108,7 +108,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="119"/>
         <CursorPos X="2" Y="80"/>
-        <UsageCount Value="95"/>
+        <UsageCount Value="66"/>
       </Unit7>
       <Unit8>
         <Filename Value="C:\Ultibo\Core\fpc\3.1.1\source\rtl\ultibo\core\shell.pas"/>
@@ -116,7 +116,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="711"/>
         <CursorPos X="23" Y="732"/>
-        <UsageCount Value="83"/>
+        <UsageCount Value="54"/>
       </Unit8>
       <Unit9>
         <Filename Value="C:\Ultibo\Core\fpc\3.1.1\source\packages\ultibounits\src\vgshapes.pas"/>
@@ -140,9 +140,9 @@
         <Filename Value="C:\Ultibo\Core\fpc\3.1.1\source\rtl\ultibo\core\platform.pas"/>
         <UnitName Value="Platform"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="8598"/>
-        <CursorPos X="2" Y="8604"/>
-        <UsageCount Value="145"/>
+        <TopLine Value="6931"/>
+        <CursorPos X="2" Y="6931"/>
+        <UsageCount Value="118"/>
       </Unit11>
       <Unit12>
         <Filename Value="C:\Ultibo\Core\fpc\3.1.1\source\rtl\ultibo\core\globalconst.pas"/>
@@ -150,113 +150,63 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="1072"/>
         <CursorPos X="42" Y="920"/>
-        <UsageCount Value="147"/>
+        <UsageCount Value="118"/>
       </Unit12>
       <Unit13>
-        <Filename Value="C:\Ultibo\Core\fpc\3.1.1\source\rtl\ultibo\drivers\pitft28.pas"/>
-        <UnitName Value="PiTFT28"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="254"/>
-        <CursorPos X="39" Y="300"/>
-        <UsageCount Value="23"/>
-      </Unit13>
-      <Unit14>
-        <Filename Value="C:\Ultibo\Core\fpc\3.1.1\source\rtl\ultibo\core\font.pas"/>
-        <UnitName Value="Font"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="334"/>
-        <CursorPos X="14" Y="340"/>
-        <UsageCount Value="22"/>
-      </Unit14>
-      <Unit15>
-        <Filename Value="C:\Ultibo\Core\fpc\3.1.1\source\rtl\ultibo\fonts\Sun_12x22.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="59"/>
-        <CursorPos X="14" Y="74"/>
-        <UsageCount Value="22"/>
-      </Unit15>
-      <Unit16>
-        <Filename Value="C:\Ultibo\Core\fpc\3.1.1\source\rtl\ultibo\core\vc4.pas"/>
-        <UnitName Value="VC4"/>
-        <EditorIndex Value="-1"/>
-        <CursorPos X="20" Y="5"/>
-        <UsageCount Value="22"/>
-      </Unit16>
-      <Unit17>
-        <Filename Value="..\..\Asphyre-ultibo\Source\PXL.Displays.ILI9340.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="165"/>
-        <CursorPos X="34" Y="184"/>
-        <UsageCount Value="7"/>
-      </Unit17>
-      <Unit18>
         <Filename Value="C:\Ultibo\Core\fpc\3.1.1\source\rtl\inc\systemh.inc"/>
         <EditorIndex Value="7"/>
         <TopLine Value="354"/>
         <CursorPos X="3" Y="370"/>
         <UsageCount Value="108"/>
         <Loaded Value="True"/>
-      </Unit18>
-      <Unit19>
+      </Unit13>
+      <Unit14>
         <Filename Value="C:\Ultibo\Core\fpc\3.1.1\source\rtl\objpas\sysutils\sysinth.inc"/>
         <EditorIndex Value="6"/>
         <TopLine Value="25"/>
         <CursorPos X="9" Y="44"/>
         <UsageCount Value="108"/>
         <Loaded Value="True"/>
-      </Unit19>
-      <Unit20>
-        <Filename Value="..\..\Asphyre-ultibo\Source\PXL.Canvas.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="125"/>
-        <CursorPos X="58" Y="125"/>
-        <UsageCount Value="7"/>
-      </Unit20>
-      <Unit21>
+      </Unit14>
+      <Unit15>
         <Filename Value="C:\Ultibo\Core\fpc\3.1.1\source\rtl\ultibo\core\framebuffer.pas"/>
         <UnitName Value="Framebuffer"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="3"/>
         <TopLine Value="60"/>
         <CursorPos X="48" Y="70"/>
         <UsageCount Value="105"/>
         <Loaded Value="True"/>
-      </Unit21>
-      <Unit22>
-        <Filename Value="C:\Ultibo\Core\fpc\3.1.1\source\rtl\ultibo\core\console.pas"/>
-        <UnitName Value="Console"/>
+      </Unit15>
+      <Unit16>
+        <Filename Value="..\..\Asphyre-ultibo\Source\PXL.Boards.Ultibo.pas"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="598"/>
-        <CursorPos X="10" Y="614"/>
+        <TopLine Value="21"/>
+        <CursorPos X="69" Y="42"/>
+        <UsageCount Value="8"/>
+      </Unit16>
+      <Unit17>
+        <Filename Value="C:\Ultibo\Core\fpc\3.1.1\source\rtl\ultibo\core\rtc.pas"/>
+        <UnitName Value="RTC"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="28"/>
+        <CursorPos X="19" Y="35"/>
         <UsageCount Value="7"/>
-      </Unit22>
-      <Unit23>
-        <Filename Value="..\..\Asphyre-ultibo\Source\PXL.Bitmaps.pas"/>
+      </Unit17>
+      <Unit18>
+        <Filename Value="C:\Ultibo\Core\fpc\3.1.1\source\rtl\ultibo\core\devices.pas"/>
+        <UnitName Value="Devices"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="155"/>
-        <CursorPos X="14" Y="169"/>
+        <TopLine Value="151"/>
         <UsageCount Value="7"/>
-      </Unit23>
-      <Unit24>
-        <Filename Value="C:\Ultibo\Core\fpc\3.1.1\source\rtl\ultibo\system.pp"/>
-        <UnitName Value="System"/>
+      </Unit18>
+      <Unit19>
+        <Filename Value="C:\Ultibo\Core\fpc\3.1.1\source\rtl\ultibo\drivers\ds1307.pas"/>
+        <UnitName Value="DS1307"/>
         <EditorIndex Value="-1"/>
-        <CursorPos Y="16"/>
-        <UsageCount Value="6"/>
-      </Unit24>
-      <Unit25>
-        <Filename Value="..\..\Asphyre-ultibo\Source\PXL.Surfaces.LCL.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="67"/>
-        <CursorPos X="46" Y="60"/>
-        <UsageCount Value="6"/>
-      </Unit25>
-      <Unit26>
-        <Filename Value="..\..\Asphyre-ultibo\Source\PXL.Surfaces.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="270"/>
-        <CursorPos X="35" Y="293"/>
-        <UsageCount Value="6"/>
-      </Unit26>
+        <TopLine Value="358"/>
+        <CursorPos X="36" Y="368"/>
+        <UsageCount Value="7"/>
+      </Unit19>
     </Units>
     <OtherDefines Count="2">
       <Define0 Value="ZERO"/>
@@ -264,125 +214,132 @@
     </OtherDefines>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="speeduinomessagehandler.pas"/>
-        <Caret Line="111" Column="30" TopLine="87"/>
+        <Filename Value="lcdgauge.lpr"/>
+        <Caret Line="588" Column="7" TopLine="567"/>
       </Position1>
       <Position2>
-        <Filename Value="speeduinomessagehandler.pas"/>
-        <Caret Line="128" Column="30" TopLine="104"/>
+        <Filename Value="lcdgauge.lpr"/>
+        <Caret Line="659" Column="19" TopLine="586"/>
       </Position2>
       <Position3>
-        <Filename Value="speeduinomessagehandler.pas"/>
-        <Caret Line="135" Column="33" TopLine="112"/>
+        <Filename Value="lcdgauge.lpr"/>
+        <Caret Line="503" Column="16" TopLine="491"/>
       </Position3>
       <Position4>
-        <Filename Value="speeduinomessagehandler.pas"/>
-        <Caret Line="136" Column="33" TopLine="112"/>
+        <Filename Value="lcdgauge.lpr"/>
+        <Caret Line="80" Column="16" TopLine="59"/>
       </Position4>
       <Position5>
         <Filename Value="speeduinomessagehandler.pas"/>
-        <Caret Line="137" Column="29" TopLine="113"/>
+        <Caret Line="75" Column="16" TopLine="68"/>
       </Position5>
       <Position6>
         <Filename Value="speeduinomessagehandler.pas"/>
-        <Caret Line="138" Column="29" TopLine="114"/>
+        <Caret Line="113" Column="14" TopLine="92"/>
       </Position6>
       <Position7>
         <Filename Value="speeduinomessagehandler.pas"/>
-        <Caret Line="140" Column="33" TopLine="116"/>
+        <Caret Line="353" Column="51" TopLine="333"/>
       </Position7>
       <Position8>
         <Filename Value="speeduinomessagehandler.pas"/>
-        <Caret Line="173" Column="20" TopLine="149"/>
+        <Caret Line="354" Column="32" TopLine="334"/>
       </Position8>
       <Position9>
-        <Filename Value="lcdgauge.lpr"/>
-        <Caret Line="346" Column="53" TopLine="328"/>
+        <Filename Value="speeduinomessagehandler.pas"/>
+        <Caret Line="76" Column="21" TopLine="62"/>
       </Position9>
       <Position10>
-        <Filename Value="lcdgauge.lpr"/>
-        <Caret Line="311" Column="29" TopLine="227"/>
+        <Filename Value="speeduinomessagehandler.pas"/>
+        <Caret Line="114" Column="19" TopLine="93"/>
       </Position10>
       <Position11>
-        <Filename Value="lcdgauge.lpr"/>
-        <Caret Line="258" Column="41" TopLine="251"/>
+        <Filename Value="speeduinomessagehandler.pas"/>
+        <Caret Line="144" Column="19" TopLine="123"/>
       </Position11>
       <Position12>
-        <Filename Value="lcdgauge.lpr"/>
-        <Caret Line="256" Column="27" TopLine="251"/>
+        <Filename Value="speeduinomessagehandler.pas"/>
+        <Caret Line="350" Column="23" TopLine="330"/>
       </Position12>
       <Position13>
-        <Filename Value="lcdgauge.lpr"/>
-        <Caret Line="259" Column="44" TopLine="251"/>
+        <Filename Value="speeduinomessagehandler.pas"/>
+        <Caret Line="363" Column="25" TopLine="343"/>
       </Position13>
       <Position14>
-        <Filename Value="lcdgauge.lpr"/>
-        <Caret Line="304" Column="8" TopLine="280"/>
+        <Filename Value="speeduinomessagehandler.pas"/>
+        <Caret Line="366" Column="23" TopLine="346"/>
       </Position14>
       <Position15>
-        <Filename Value="lcdgauge.lpr"/>
-        <Caret Line="479" Column="41" TopLine="461"/>
+        <Filename Value="speeduinomessagehandler.pas"/>
+        <Caret Line="76" Column="21" TopLine="63"/>
       </Position15>
       <Position16>
-        <Filename Value="lcdgauge.lpr"/>
-        <Caret Line="330" Column="11" TopLine="312"/>
+        <Filename Value="speeduinomessagehandler.pas"/>
+        <Caret Line="114" Column="19" TopLine="93"/>
       </Position16>
       <Position17>
-        <Filename Value="lcdgauge.lpr"/>
-        <Caret Line="365" Column="25" TopLine="344"/>
+        <Filename Value="speeduinomessagehandler.pas"/>
+        <Caret Line="144" Column="19" TopLine="123"/>
       </Position17>
       <Position18>
-        <Filename Value="lcdgauge.lpr"/>
-        <Caret Line="258" Column="4" TopLine="240"/>
+        <Filename Value="speeduinomessagehandler.pas"/>
+        <Caret Line="350" Column="23" TopLine="330"/>
       </Position18>
       <Position19>
-        <Filename Value="lcdgauge.lpr"/>
-        <Caret Line="256" Column="70" TopLine="243"/>
+        <Filename Value="speeduinomessagehandler.pas"/>
+        <Caret Line="363" Column="25" TopLine="343"/>
       </Position19>
       <Position20>
         <Filename Value="lcdgauge.lpr"/>
-        <Caret Line="257" Column="34" TopLine="242"/>
+        <Caret Line="139" Column="15" TopLine="215"/>
       </Position20>
       <Position21>
         <Filename Value="lcdgauge.lpr"/>
-        <Caret Line="255" Column="65" TopLine="242"/>
+        <Caret Line="493" Column="24" TopLine="475"/>
       </Position21>
       <Position22>
-        <Filename Value="lcdgauge.lpr"/>
-        <Caret Line="257" Column="67" TopLine="242"/>
+        <Filename Value="speeduinomessagehandler.pas"/>
+        <Caret Line="278" Column="32" TopLine="278"/>
       </Position22>
       <Position23>
-        <Filename Value="lcdgauge.lpr"/>
-        <Caret Line="20" Column="27" TopLine="90"/>
+        <Filename Value="speeduinomessagehandler.pas"/>
+        <Caret Line="97" Column="28" TopLine="86"/>
       </Position23>
       <Position24>
-        <Filename Value="lcdgauge.lpr"/>
-        <Caret Line="470" Column="44" TopLine="456"/>
+        <Filename Value="speeduinomessagehandler.pas"/>
+        <Caret Line="144" Column="49" TopLine="122"/>
       </Position24>
       <Position25>
-        <Filename Value="lcdgauge.lpr"/>
-        <Caret Line="85" Column="19" TopLine="157"/>
+        <Filename Value="speeduinomessagehandler.pas"/>
+        <Caret Line="211" Column="41" TopLine="207"/>
       </Position25>
       <Position26>
-        <Filename Value="lcdgauge.lpr"/>
-        <Caret Line="125" Column="46" TopLine="109"/>
+        <Filename Value="speeduinomessagehandler.pas"/>
+        <Caret Line="97" Column="28" TopLine="86"/>
       </Position26>
       <Position27>
-        <Filename Value="lcdgauge.lpr"/>
-        <Caret Line="519" Column="13" TopLine="505"/>
+        <Filename Value="speeduinomessagehandler.pas"/>
+        <Caret Line="76" Column="21" TopLine="63"/>
       </Position27>
       <Position28>
-        <Filename Value="lcdgauge.lpr"/>
-        <Caret Line="523" TopLine="522"/>
+        <Filename Value="speeduinomessagehandler.pas"/>
+        <Caret Line="114" Column="19" TopLine="93"/>
       </Position28>
       <Position29>
-        <Filename Value="lcdgauge.lpr"/>
-        <Caret Line="570" Column="40" TopLine="556"/>
+        <Filename Value="speeduinomessagehandler.pas"/>
+        <Caret Line="144" Column="19" TopLine="123"/>
       </Position29>
       <Position30>
         <Filename Value="lcdgauge.lpr"/>
-        <Caret Line="133" Column="3" TopLine="118"/>
+        <Caret Line="399" Column="21" TopLine="395"/>
       </Position30>
     </JumpHistory>
   </ProjectSession>
+  <Debugging>
+    <Watches Count="1">
+      <Item1>
+        <Expression Value="SERIAL_3_RECORD_SIZE"/>
+      </Item1>
+    </Watches>
+  </Debugging>
 </CONFIG>

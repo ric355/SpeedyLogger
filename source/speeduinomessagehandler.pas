@@ -72,6 +72,8 @@ type
     FPaused : Boolean;
     Ftimeoflastmessage : longint;
     FStreamCS : TRTLCriticalSection;
+    FMarkNumber : Word;
+    FMarkerRequested : Boolean;
   private
     function GetByteCount : Longint;
     function GetFilename : string;
@@ -92,6 +94,7 @@ type
     procedure PauseLogging;
     procedure ResumeLogging;
     procedure EndLogging;
+    procedure RequestMarker;
     property IsPaused : boolean read FPaused;
     property TimeOfLastMessage : Integer read FTimeOfLastMessage;
     property ByteCount : longint read GetByteCount;
@@ -107,6 +110,8 @@ begin
   inherited create(SERIAL_3_RECORD_SIZE, true);
 
   FFileStream := nil;
+  FMarkNumber := 1;
+  FMarkerRequested := false;
   Config(115200,'N',8,1,0);
   baseptr := @rtStatus;
   ptr := baseptr;
@@ -132,6 +137,11 @@ begin
   FFileStream.Free;
   DoneCriticalSection(FStreamCS);
   inherited destroy;
+end;
+
+procedure TSpeeduinoMessageHandler.RequestMarker;
+begin
+  FMarkerRequested := true;
 end;
 
 function TSpeeduinoMessageHandler.GetFilename : string;
@@ -162,7 +172,7 @@ end;
 procedure TSpeeduinoMessageHandler.OnRecordAvailable(recP : Pointer);
 begin
   // temporary move until I sort out buffer passing to the thread.
-  move(pchar(recp)^, rtstatus, 76);
+  move(pchar(recp)^, rtstatus, SERIAL_3_RECORD_SIZE);
 
   if assigned(screenwriter) then
      screenwriter;
@@ -290,6 +300,7 @@ procedure TSpeeduinoMessageHandler.DumpRealTimeData;
 
 var
   row : string;
+  row2 : string;
 
 begin
   FTimeOfLastMessage := gettickcount64;
@@ -304,8 +315,8 @@ begin
      + #9 + inttostr(secl)
      + #9 + inttostr(status1)
      + #9 + floattostr(dwell/10)
-     + #9 + inttostr(iat)
-     + #9 + inttostr(clt)
+     + #9 + inttostr(iat - 40)
+     + #9 + inttostr(clt - 40)
      + #9 + inttostr(batcorrection)
      + #9 + floattostr(batteryv/10)
      + #9 + floattostr(o2/10)
@@ -316,7 +327,7 @@ begin
      + #9 + inttostr(gammae)
      + #9 + inttostr(ve)
      + #9 + floattostr(afrtarget/10)
-     + #9 + inttostr(pw1hi * 256 + pw1lo)
+     + #9 + floattostr((pw1hi * 256 + pw1lo)/1000)
      + #9 + inttostr(tpsdot*10)
      + #9 + inttostr(advance)
      + #9 + inttostr(tps)
@@ -329,7 +340,7 @@ begin
      + #9 + inttostr(flexcorrection)
      + #9 + inttostr(flexigncorrection)
      + #9 + inttostr(idleload)
-     + #9 + inttostr(o2_2)
+     + #9 + floattostr(o2_2/10)
      + #9 + inttostr(baro)
      + #9 + inttostr(errors)
 
@@ -341,6 +352,14 @@ begin
   try
     EnterCriticalSection(FStreamCS);
     FFileStream.Write(row[1], length(row));
+
+    if (FMarkerRequested) then
+    begin
+       row2 := 'MARK ' + Format('%.3d', [FMarkNumber]) + ' - manual - no date';
+       FMarkNumber := FMarkNumber + 1;
+      FFileStream.Write(row2[1], length(row2));
+      FMarkerRequested := False;
+    end;
   finally
     LeaveCriticalSection(FStreamCS);
   end;
