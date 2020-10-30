@@ -1,7 +1,7 @@
 SpeedyLogger Zero touch Speeduino Data Logger
 =============================================
 
-SpeedyLogger is a bare metal application which runs on the Raspberry Pi. It connects to the Speeduino engine management ECU's Serial3 port, and automatically logs real-time engine data to the SD card. It will probably work on a pi 1 if needed, although some minor changes would be nedeed to the source to include the right libraries. On a Pi 2, boot time is about 1 second, after which logging will begin assuming the serial line is connected to the Arduino.
+SpeedyLogger is a bare metal application which runs on the Raspberry Pi. It connects to the Speeduino engine management ECU's Serial3 port, and automatically logs real-time engine data to the SD card. It should work on a Pi zero, 1, 2, or 3. On a Pi 2, boot time is about 1 second, after which logging will begin assuming the serial line is connected to the Arduino.
 
 This software is very much an Alpha release. No guarantees as to how effective it will be for you but I will do my best to help anyone who has issues getting it going. See the 'what's coming next' section for known limitations.
 
@@ -13,7 +13,7 @@ You should engineer your installation so that power is applied to the Raspberry 
 Powering Off
 ============
 
-It is safe to remove the power from the Pi without any shutdown sequence, even when logging.
+It is safe to remove the power from the Pi without any shutdown sequence, even when logging. You may miss the last couple of lines of the log file when the system is shut down, so if you want to make sure you capture something at the end of your run, wait a couple of seconds before turning off the ignition.
 
 Serial Connection
 =================
@@ -94,14 +94,8 @@ Disk usage: To give you some idea of the size of card you need, 1 minute of data
 
 if you are not connected to a network, then to view or access the files you must remove the card from the Pi. You should only remove the card when the power is off.
 
-What's Coming Next?
-===================
+Note that the latest release moves the location of the datalogs from the root directory to a datalogs directory. This directory will be created automatically the first time the application is started.
 
-As this is alpha software, there is plenty to do to make it work better. At the moment for example, not all of the fields are being properly inerpreted if they are being scaled in some way. I'll probably extend it to read the speeduino .ini file so that items can be processed more accurately. This will mean you'll have to copy that file to the card during installation in the future, and keep it updated inline with the firmware version you are using.
-
-Sometimes the management of the log files falls a bit short. If you add some demand (usually from the telnet terminal) that puts too much load on the device, then it may start skipping log files leaving multiple files with small amounts of data in them. So work on this is needed to recognise when the load is too high and back off a bit. This is more of a bench testing problem than a real-world problem though.
-
-The long term objective is to produce a grahical dash that is instant on much like the OEM digital dashboards in current vehicles, whilst obviously retaining the logging capability. This is a long way off yet, although some work has been done on this already using some rudimentary graphics. This is the real reason for using a Pi rather than just an Arduino with an SD card attached, since it offers HDMI output out of the box and has video acceleration built in.
 
 Contributing or Changing the source
 ===================================
