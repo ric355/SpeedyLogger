@@ -5,12 +5,16 @@ unit speeduinomessagehandler;
 interface
 
 uses
-  Classes, SysUtils,
+  Ultibo, Classes, Platform, GlobalConst, Serial, SysUtils, threads,
+  readthread,
   Serial3comms,
-  shell;
+  bufferedwrites,
+  shell,
+  globaltypes;
 
 const
   BIT_STATUS1_DFCO = 16;     // bit 4 (2^4) in speeduino code this is defined as the bit number.
+  SERIAL_3_FULL_RECORD_SIZE = 76;      // uses an A request. Includes the 'A' in the response.
 
 type
   TRealTimeStatus = record
@@ -62,63 +66,191 @@ type
   end;
 
 
-  TSpeeduinoMessageHandler = class(TComPortReadThread)
+  TSpeeduinoMessageHandler = class(TReadThread)
   private
-    FFileStream : TFileStream;
-    baseptr : PChar;
-    ptr : PChar;
+    FRootFolder : string;
+    FOutputFilename : string;
+    FLoggingPaused : Boolean;
+    FLogfileOpen : boolean;
+    FLoggingEnabled : boolean;
+    FByteCount : integer;
     filenumber : integer;
     FLogStartTime : Integer;
-    FPaused : Boolean;
     Ftimeoflastmessage : longint;
     FStreamCS : TRTLCriticalSection;
     FMarkNumber : Word;
     FMarkerRequested : Boolean;
+    FMsgTimeSpin : TSpinHandle;
+    FWriteBuffer : TBufferedWriter;
   private
     function GetByteCount : Longint;
     function GetFilename : string;
+    function GetFileSizeStr : string;
+    function GetTimeOfLastMessage : longint;
   public
     rtStatus : TRealTimeStatus;
-    screenwriter : procedure;
+    DataIsReady : procedure;
     constructor Create;
     destructor destroy; override;
-    procedure request;
-    procedure DumpRealTimeData;
-    procedure OnRecordAvailable(recP : pointer); override;
+    procedure requestFullImage;
+    procedure DumpRealTimeData; virtual;
+    procedure OnRecordAvailable(recP : pchar; bufsize : integer); override;
     procedure OnConnectionEstablished; override;
-    function MAPValue : integer;
-    function VEValue : integer;
-    function AdvanceValue : integer;
     procedure DeleteLogs;
-    procedure ResetLogs;
-    procedure PauseLogging;
-    procedure ResumeLogging;
-    procedure EndLogging;
+    procedure ResetLogs;    // resets file number to zero
+    procedure PauseLogging;  // pause logging, keep data coming in
+    procedure ResumeLogging; // resume logging
+    procedure StartLogging; // start logging (makes first request to ecu)
+    procedure EndLogging;    // stop this log completely, terminate thread
     procedure RequestMarker;
-    property IsPaused : boolean read FPaused;
-    property TimeOfLastMessage : Integer read FTimeOfLastMessage;
+    procedure SendTimeUpdate; virtual;
+    property IsPaused : boolean read FLoggingPaused;
+    property TimeOfLastMessage : Integer read GetTimeOfLastMessage;
     property ByteCount : longint read GetByteCount;
-    property Filename : string read GetFilename;
+    property OutputFilename : string read GetFilename;
+    property FileSizeStr : string read GetFileSizeStr;
+  end;
+
+
+  TComPortReadThread=class(TSpeeduinoMessageHandler)
+  private
+    FConfi : TConf;
+
+  protected
+    procedure Config(cBaudRate : LongWord; cParity : Char; cDataBits : LongWord; cStopBits : LongWord; cFlowControl : LongWord); virtual;
+    procedure DeviceOpen; override;
+    procedure DeviceClose; override;
+    procedure ReadData; override;
+    procedure WriteData(data: string); override;
+    procedure RequestDeviceClose;
+    function ExtraBufferByteCount : integer; override;
+
+  public
+    procedure FastForward(secs : integer); override;
+    constructor Create;
+  published
   end;
 
 implementation
+
+uses
+  logoutput;
+
+constructor TComPortReadThread.Create; //(aRecordSize : Integer; CreateSuspended : boolean);
+begin
+  inherited Create; //(aRecordSize, CreateSuspended);
+
+  Config(115200,'N',8,1,0);
+end;
+
+function TComPortReadThread.ExtraBufferByteCount : integer;
+begin
+  Result := 0;
+end;
+
+procedure TComPortReadThread.DeviceOpen;
+begin
+  SerialOpen(FConfi.coBaudRate,FConfi.coDataBits,FConfi.coStopBits,FConfi.coParity,FConfi.coFlowControl,0,0);
+end;
+
+procedure TComPortReadThread.DeviceClose;
+begin
+  SerialClose;
+end;
+
+procedure TComPortReadThread.Config(cBaudRate : LongWord; cParity : Char; cDataBits : LongWord; cStopBits : LongWord; cFlowControl : LongWord);
+begin
+
+   FConfi.coBaudRate := cBaudRate;
+
+   FConfi.coParity := SERIAL_PARITY_NONE;
+   case cParity of
+    'N', 'n': FConfi.coParity := SERIAL_PARITY_NONE;
+    'O', 'o': FConfi.coParity := SERIAL_PARITY_ODD;
+    'E', 'e': FConfi.coParity := SERIAL_PARITY_EVEN;
+    'M', 'm': FConfi.coParity := SERIAL_PARITY_MARK;
+    'S', 's': FConfi.coParity := SERIAL_PARITY_SPACE;
+   end;
+
+  FConfi.coDataBits := SERIAL_DATA_8BIT;
+  case cDataBits of
+    7: FConfi.coDataBits := SERIAL_DATA_7BIT;
+    6: FConfi.coDataBits := SERIAL_DATA_6BIT;
+    5: FConfi.coDataBits := SERIAL_DATA_5BIT;
+  end;
+
+  FConfi.coStopBits := SERIAL_STOP_1BIT;
+  case cStopBits of
+    2: FConfi.coStopBits := SERIAL_STOP_2BIT;
+    15: FConfi.coStopBits := SERIAL_STOP_1BIT5;
+  end;
+
+  FConfi.coFlowControl := SERIAL_FLOW_NONE;
+  case cFlowControl of
+    0: FConfi.coFlowControl := SERIAL_FLOW_NONE;
+    1: FConfi.coFlowControl := SERIAL_FLOW_RTS_CTS;
+    2: FConfi.coFlowControl := SERIAL_FLOW_DSR_DTR;
+  end;
+
+end;
+
+procedure TComPortReadThread.ReadData;
+var
+  ResultCode : integer;
+  Count : LongWord;
+begin
+   ResultCode:=SerialDeviceRead(SerialDeviceGetDefault,FUpdateBufferP,
+                     FRecordSize - FBytesRead,SERIAL_READ_NON_BLOCK,
+                     Count);
+
+   if (Count > 0) then
+   begin
+     FBytesRead := FBytesRead + Count;
+     FUpdateBufferP := FUpdateBufferP + Count;
+   end;
+end;
+
+procedure TComPortReadThread.WriteData(data: string);
+var
+  Count3 : Longword;
+  writebuf : array[1..10] of byte;
+  i : integer;
+begin
+  Count3 := 0;
+  if (SerialWrite(PChar(data),Length(data),Count3) <> ERROR_SUCCESS) then
+    log('error writing to serial port');
+end;
+
+procedure TComPortReadThread.RequestDeviceClose;
+begin
+  FDeviceCloseRequested := True;
+end;
+
+procedure TComPortReadThread.FastForward(secs : integer);
+begin
+  // no FF function available on a serial connection
+end;
+
+
 
 constructor TSpeeduinoMessageHandler.Create;
 var
   infoFile : TextFile;
 begin
-  inherited create(SERIAL_3_RECORD_SIZE, true);
+  inherited create(SERIAL_3_FULL_RECORD_SIZE, true);
 
-  FFileStream := nil;
+  FRootFolder := 'c:\datalogs\';
   FMarkNumber := 1;
   FMarkerRequested := false;
-  Config(115200,'N',8,1,0);
-  baseptr := @rtStatus;
-  ptr := baseptr;
   filenumber := 0;
   FLogStartTime := GetTickCount64;
-  FPaused := True;
-  InitCriticalSection(FStreamCS);
+  FLoggingPaused := True;
+  InitializeCriticalSection(FStreamCS);
+  FOutputFilename := 'Not Connected';
+  FMsgTimeSpin := SpinCreate;
+
+  FLogfileOpen := false;
+  FLoggingEnabled := false;
 
   FTimeOfLastMessage := FLogStartTime; // this may need to change later
 
@@ -130,12 +262,27 @@ begin
      closefile(infofile);
   end;
 
+  FWriteBuffer := TBufferedWriter.Create(30*1024, 5*1024, true, FRootFolder);
 end;
 
 destructor TSpeeduinoMessageHandler.destroy;
 begin
-  FFileStream.Free;
-  DoneCriticalSection(FStreamCS);
+  SpinDestroy(FMsgTimeSpin);
+
+  try
+
+  EnterCriticalSection(FStreamCS);
+  try
+    FWriteBuffer.Free;
+  finally
+    LeaveCriticalSection(FStreamCS);
+  end;
+
+  DeleteCriticalSection(FStreamCS);
+
+  except
+  end;
+
   inherited destroy;
 end;
 
@@ -146,40 +293,67 @@ end;
 
 function TSpeeduinoMessageHandler.GetFilename : string;
 begin
-  EnterCriticalSection(FStreamCS);
-  try
-  if FFileStream <> nil then
-     Result := FFileStream.FileName
+  Result := FOutputFileName;
+end;
+
+function TSpeeduinoMessageHandler.GetFileSizeStr : string;
+var
+  b : longint;
+begin
+  b := ByteCount;
+  if (b > 0) then
+    Result := formatfloat('##0.0#', ByteCount/1024/1024)+' Mb'
   else
-     Result := 'Not Logging';
-  finally
-    LeaveCriticalSection(FStreamCS);
-  end;
+    Result := '0.0 Mb';
 end;
 
 function TSpeeduinoMessageHandler.GetByteCount : longint;
 begin
-  Result := 0;
+  Result := FByteCount;
+end;
+
+function TSpeeduinoMessageHandler.GetTimeOfLastMessage : longint;
+begin
   try
-    EnterCriticalSection(FStreamCS);
-    if (assigned(FFileStream)) then
-       Result := FFileStream.Position;
+    SpinLock(FMsgTimeSpin);
+    Result := Ftimeoflastmessage;
+
   finally
-    LeaveCriticalSection(FStreamCS);
+    SpinUnlock(FMsgTimeSpin);
   end;
 end;
 
-procedure TSpeeduinoMessageHandler.OnRecordAvailable(recP : Pointer);
+procedure TSpeeduinoMessageHandler.OnRecordAvailable(recP : pchar; bufsize : integer);
+var
+  i : integer;
+  str : string;
 begin
-  // temporary move until I sort out buffer passing to the thread.
-  move(pchar(recp)^, rtstatus, SERIAL_3_RECORD_SIZE);
+  try
+    SpinLock(FMsgTimeSpin);
+    FTimeOfLastMessage := gettickcount64;
+  finally
+    SpinUnLock(FMsgTimeSpin);
+  end;
 
-  if assigned(screenwriter) then
-     screenwriter;
+  if (recp^ = 'A')then
+  begin
+    move(pchar(recp)^, rtstatus, bufsize);  //SERIAL_3_FULL_RECORD_SIZE
 
-  DumpRealTimeData;
-  if (Active) then
-     Request;
+    // this has to be done regardless of whether logging is paused.
+    if assigned(DataIsReady) then
+       DataIsReady;
+
+    if (not FLoggingPaused) then
+    begin
+      DumpRealTimeData;
+    end;
+
+    // again, even if logging is paused we still want the data for the gui.
+    if (Active) then
+    begin
+       RequestFullImage;
+    end;
+  end;
 end;
 
 procedure TSpeeduinoMessageHandler.OnConnectionEstablished;
@@ -188,8 +362,29 @@ var
   infofile : TextFile;
 
 begin
+  log('Connection established');
+
+  // assign the output filename first, because we want it assigned even if we
+  // don't open the file, since it is also used for saving RTT data.
+
+  FOutputFilename := 'dl'+format('%.6d',[filenumber])+'.msl';
+
+  if (FLoggingPaused) or (not FLoggingEnabled) then
+  begin
+    log('Not opening log file because logging is paused or disabled.');
+    exit;
+  end
+  else
+  if (FLogFileOpen) then
+  begin
+    log('Not opening log file because it is already open');
+    exit;           // no need to do anything if already open.
+  end;
+
   // we need to work out what filename to use.
   // first, look in the file datalo.inf for the file number
+
+  try
   assignfile(infofile, 'c:\datalog.inf');
   if (fileexists('c:\datalog.inf')) then
   begin
@@ -197,22 +392,35 @@ begin
      readln(infofile, filenumber);
      closefile(infofile);
   end;
+  except
+    on e: exception do log('exception writing datalog.inf' + e.message);
+  end;
 
-  //open the stream (for now - going to change this to a textfile as the stream is overkill)
-  FFileStream := TFileStream.Create('dl'+format('%.6d',[filenumber])+'.msl',fmCreate);
+  //open the file for writing
+
+  try
+    log('starting new file ' + fOutputfilename);
+    FWriteBuffer.StartNewFile(fOutputFilename);
+  except
+    on e: exception do log('exception starting new file '+fOutputFilename+' ' + e.message);
+  end;
 
   // update the file number for the next iteration
+
+  try
   filenumber := filenumber + 1;
   rewrite(infofile);
   writeln(infofile, filenumber);
   closefile(infofile);
+  except
+    on e: exception do log('exception old rewrite infofile '+e.message);
+  end;
 
   //write the headers to the file
   row := 'time'
     + #9 + 'RPM'
     + #9 + 'MAP'
     + #9 + 'Engine'
-
     + #9 + 'Secl'
     + #9 + 'status1'
     + #9 + 'dwell'
@@ -244,14 +452,19 @@ begin
     + #9 + 'O2_2'
     + #9 + 'Baro'
     + #9 + 'Error#'
+    ;
+    row := row + #13 + #10;
 
-    + #13 + #10;
+  try
+    FWriteBuffer.AddRow(row)
+  except
+    on e: exception do log('exception fwritebuffer.addrow '+e.message);
 
-  FFileStream.Write(row[1], length(row));
+  end;
+
   row := #9 + 'rpm'
     + #9 + 'psi'
     + #9 + 'bits'
-
     + #9 + 'sec'
     + #9 + ''
     + #9 + 'ms'
@@ -283,16 +496,18 @@ begin
     + #9 + 'AFR'
     + #9 + 'psi'
     + #9 + ''
+    ;
 
-    + #13 + #10;
+    row := row + #13 + #10;
 
-  FFileStream.Write(row[1], length(row));
+  FWriteBuffer.AddRow(row);
 
+  FLogfileOpen := true;
 end;
 
-procedure TSpeeduinoMessageHandler.Request;
+procedure TSpeeduinoMessageHandler.RequestFullImage;
 begin
-  FPaused := False;
+  RecordSize := SERIAL_3_FULL_RECORD_SIZE;
   WriteData('A');
 end;
 
@@ -303,7 +518,11 @@ var
   row2 : string;
 
 begin
-  FTimeOfLastMessage := gettickcount64;
+  // if the log file is not open, even though logging has been enabled,
+  // then we can open it here.
+
+  if (not FLogFileOpen) then
+    OnConnectionEstablished;
 
   with rtstatus do
   begin
@@ -339,31 +558,38 @@ begin
      + #9 + inttostr(ethanolpct)
      + #9 + inttostr(flexcorrection)
      + #9 + inttostr(flexigncorrection)
-     + #9 + inttostr(idleload)
+     + #9 + inttostr(idleload * 2)     // idle load is divided by 2 by the ecu so that it fits into a byte
      + #9 + floattostr(o2_2/10)
      + #9 + inttostr(baro)
      + #9 + inttostr(errors)
+     ;
 
-     + #13 + #10;
+      row := row + #13 + #10;
   end;
+
+  FByteCount := FByteCount + Length(row);
 
   // write the data to the log
 
   try
     EnterCriticalSection(FStreamCS);
-    FFileStream.Write(row[1], length(row));
+
+    FWriteBuffer.AddRow(row);
 
     if (FMarkerRequested) then
     begin
-       row2 := 'MARK ' + Format('%.3d', [FMarkNumber]) + ' - manual - no date';
-       FMarkNumber := FMarkNumber + 1;
-      FFileStream.Write(row2[1], length(row2));
+      row2 := 'MARK ' + Format('%.3d', [FMarkNumber]) + ' - manual - no date';
+      FMarkNumber := FMarkNumber + 1;
+
+      FWriteBuffer.AddRow(row2);
+
       FMarkerRequested := False;
+      FByteCount := FByteCount + Length(row2);
     end;
   finally
     LeaveCriticalSection(FStreamCS);
   end;
- end;
+end;
 
 procedure TSpeeduinoMessageHandler.DeleteLogs;
 var
@@ -393,11 +619,11 @@ begin
 
   try
     EnterCriticalSection(FStreamCS);
-    if assigned(FFileStream) then
-        FFileStream.Free;
 
-    //open the stream (for now - going to change this to a textfile now I think
-    FFileStream := TFileStream.Create('dl'+format('%.6d',[filenumber])+'.msl',fmCreate);
+    //open the new text file for writing.
+    FOutputFilename := 'dl'+format('%.6d',[filenumber])+'.msl';
+
+    FWriteBuffer.StartNewFile(FOutputFilename)
   finally
     LeaveCriticalSection(FStreamCS);
   end;
@@ -408,45 +634,40 @@ begin
   closefile(infofile);
 end;
 
-function TSpeeduinoMessageHandler.MAPValue : integer;
-begin
-  Result := rtstatus.maphi * 256 + rtstatus.maplo;
-end;
-
-function TSpeeduinoMessageHandler.VEValue : integer;
-begin
-  Result := rtstatus.ve;
-end;
-
-function TSpeeduinoMessageHandler.AdvanceValue : integer;
-begin
-  Result := rtstatus.Advance;
-end;
-
 procedure TSpeeduinoMessageHandler.PauseLogging;
 begin
-  RequestDeviceClose;
-  FPaused := True;
+//  RequestDeviceClose;
+  FLoggingPaused := True;
 end;
 
 procedure TSpeeduinoMessageHandler.ResumeLogging;
 begin
-   if (FPaused) then
-   begin
-      FPaused := False;
-      Active := True;
-      FTimeOfLastMessage := GetTickCount64;
-      Request;
-   end;
+  FLoggingPaused := False;
+  FLoggingEnabled := True;
+end;
+
+procedure TSpeeduinoMessageHandler.StartLogging;
+begin
+  log('Starting logging');
+  FLoggingEnabled := true;
+  FLoggingPaused := False;
+  RequestFullImage;
 end;
 
 procedure TSpeeduinoMessageHandler.EndLogging;
 begin
   // the device will be closed. From here, restarting must set active to true
   // and then call 'request' to kickstart the process again.
-  FPaused := True;
-  Terminate;
+  FLoggingPaused := True;
+  FLoggingEnabled := False;
+  FLogfileOpen := false;
+  FWriteBuffer.CloseLogFile;
 end;
+
+procedure TSpeeduinoMessageHandler.SendTimeUpdate;
+begin
+end;
+
 
 end.
 

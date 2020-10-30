@@ -32,7 +32,6 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="C:\Users\Richard\Documents\ultibo\Asphyre-ultibo\Source\"/>
             <UnitOutputDirectory Value="lib\rpizero"/>
           </SearchPaths>
           <CodeGeneration>

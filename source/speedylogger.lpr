@@ -49,10 +49,10 @@ uses
   SpeeduinoShell,
   ledthread,
   inifiles,
-  devices;
+  devices,
+  logoutput;
 
 var
-  WindowHandle : TWindowHandle;
   SpeeduinoMsg : TSpeeduinoMessageHandler;
   IPAddress : String;
   HTTPListener : THTTPListener;
@@ -62,12 +62,9 @@ var
   iniFile : TIniFile;
   webenabled : string;
   xpos, ypos : longword;
-
-
-procedure Log(str : string);
-begin
-  ConsoleWindowWriteLn(WindowHandle, DateTimeToStr(Now) + ': ' + str);
-end;
+  currentbuttonticks : qword = 0;
+  lastbuttonticks : qword = 0;
+  commsretries : qword = 0;
 
 
 procedure InitWebServer;
@@ -131,28 +128,52 @@ begin
   // for debug purposes so it doesn't matter.
   with SpeeduinoMsg.RTStatus do
   begin
-    ConsoleWindowWriteEx(WindowHandle, 'secl    : ' + inttostr(secl) + '    ',
+    ConsoleWindowWriteEx(WindowHandle, 'secl          : ' + inttostr(secl) + '    ',
        1, ypos, COLOR_BLACK, COLOR_WHITE);
-    ConsoleWindowWriteEx(WindowHandle, 'rpm     : ' + inttostr(rpmhi * 256 + rpmlo) + '    ',
+    ConsoleWindowWriteEx(WindowHandle, 'rpm           : ' + inttostr(rpmhi * 256 + rpmlo) + '    ',
        1, ypos + 1, COLOR_BLACK, COLOR_WHITE);
-    ConsoleWindowWriteEx(WindowHandle, 'TPS     : ' + inttostr(tps) + '    ',
+    ConsoleWindowWriteEx(WindowHandle, 'TPS           : ' + inttostr(tps) + '    ',
        1, ypos + 2, COLOR_BLACK, COLOR_WHITE);
-    ConsoleWindowWriteEx(WindowHandle, 'MAP     : ' + inttostr(maphi * 256 + maplo) + '    ',
+    ConsoleWindowWriteEx(WindowHandle, 'MAP           : ' + inttostr(maphi * 256 + maplo) + '    ',
        1, ypos + 3, COLOR_BLACK, COLOR_WHITE);
-    ConsoleWindowWriteEx(WindowHandle, 'VE      : ' + inttostr(ve) + '    ',
+    ConsoleWindowWriteEx(WindowHandle, 'VE            : ' + inttostr(ve) + '    ',
        1, ypos + 4, COLOR_BLACK, COLOR_WHITE);
-    ConsoleWindowWriteEx(WindowHandle, 'Advance : ' + inttostr(advance) + '    ',
+    ConsoleWindowWriteEx(WindowHandle, 'Advance       : ' + inttostr(advance) + '    ',
+       1, ypos + 5, COLOR_BLACK, COLOR_WHITE);
+    ConsoleWindowWriteEx(WindowHandle, 'Comms Retries : ' + inttostr(commsretries) + '    ',
        1, ypos + 5, COLOR_BLACK, COLOR_WHITE);
   end;
   LED.Rate := 250;
 
 end;
 
+procedure addlogfilemarker(Data : Pointer; pin, trigger : longword);
+begin
+  // add a marker to the log file, so it shows in megalogviewer.
+  currentbuttonticks := gettickcount;
+  if ((currentbuttonticks - lastbuttonticks) > 500) then
+  begin
+     // we have detected a button press that is at least 500ms after the last one (debounce)
+     lastbuttonticks := currentbuttonticks;
+     if (Assigned(SpeeduinoMsg)) then
+        SpeeduinoMsg.RequestMarker;
+  end;
+
+  GPIOInputEvent(GPIO_PIN_23,GPIO_TRIGGER_LOW,INFINITE,@addlogfilemarker,nil);
+end;
+
 begin
   LED := TLEDThread.Create;
   LED.FreeonTerminate := true;
 
+  ConsoleActivated := true;
+
   WindowHandle:=ConsoleWindowCreate(ConsoleDeviceGetDefault,CONSOLE_POSITION_FULL,True);
+
+  //add log file marker button (second from top button)
+  GPIOPullSelect(GPIO_PIN_23,GPIO_PULL_UP);
+  GPIOFunctionSelect(GPIO_PIN_23,GPIO_FUNCTION_IN);
+  GPIOInputEvent(GPIO_PIN_23,GPIO_TRIGGER_LOW,INFINITE,@addlogfilemarker,nil);
 
   // wait until the file system is ready
   while not DirectoryExists('C:\') do
@@ -160,6 +181,9 @@ begin
     Sleep(10);
    end;
   Log('File system is ready');
+
+  if (not DirectoryExists('c:\datalogs')) then
+    CreateDirectory('c:\datalogs', nil);
 
   iniFile := TIniFile.Create('c:\speedylog.ini');
   webenabled := iniFile.ReadString('webserver', 'enabled', '0');
@@ -173,19 +197,20 @@ begin
 
     //create the handler thread
 
-    SpeeduinoMsg := TSpeeduinoMessageHandler.Create;
+    log('Create message handler');
+    SpeeduinoMsg := TComPortReadThread.Create;
 
     //uncomment this line if you want to see data on the console. You
     //can change what is printed (per message) in the function itself. See the
     //TRealTimeStatus structure
-    SpeeduinoMsg.screenwriter := @DebugUpdateMessage;
+    SpeeduinoMsg.DataIsReady := @DebugUpdateMessage;
     SpeeduinoMsg.Active := True;
     SpeeduinoMsg.Start;
 
     //begin requesting data.
     //the thread will re-request data automatically until terminated or paused.
 
-    SpeeduinoMsg.Request;
+    SpeeduinoMsg.StartLogging;
     cmd.speedymessage := SpeeduinoMsg;
 
     while (not SpeeduinoMsg.Terminated) do
@@ -197,6 +222,8 @@ begin
       if (SpeeduinoMsg.timeoflastmessage < (gettickcount - 2000)) and (not SpeeduinoMsg.IsPaused) then
       begin
         SpeeduinoMsg.EndLogging;
+        SpeeduinoMsg.Terminate;
+        commsretries := commsretries + 1;
         LED.Rate := 100;
       end;
 
