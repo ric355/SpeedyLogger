@@ -5,7 +5,8 @@ unit readthread;
 interface
 
 uses
-  Classes, SysUtils, threads, callstack;
+  Classes, SysUtils, threads, callstack,
+  Ultibo, GlobalConst;
 
 type
   TReadThread = class(TThread)

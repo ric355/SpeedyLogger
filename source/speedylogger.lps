@@ -3,7 +3,7 @@
   <ProjectSession>
     <PathDelim Value="\"/>
     <Version Value="9"/>
-    <BuildModes Count="1" Active="Raspberry Pi Zero">
+    <BuildModes Count="1" Active="Raspberry Pi 3">
       <Item1 Name="Raspberry Pi 2">
         <CompilerOptions>
           <Version Value="11"/>
@@ -42,14 +42,13 @@
         </CompilerOptions>
       </Item1>
     </BuildModes>
-    <Units Count="21">
+    <Units Count="22">
       <Unit0>
         <Filename Value="speedylogger.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="SpeedyLogger"/>
-        <IsVisibleTab Value="True"/>
-        <TopLine Value="168"/>
-        <CursorPos X="28" Y="186"/>
+        <TopLine Value="60"/>
+        <CursorPos X="24" Y="82"/>
         <UsageCount Value="202"/>
         <Loaded Value="True"/>
       </Unit0>
@@ -57,7 +56,7 @@
         <Filename Value="serial3comms.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Serial3Comms"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="8"/>
         <TopLine Value="183"/>
         <CursorPos X="58" Y="206"/>
         <UsageCount Value="201"/>
@@ -174,25 +173,25 @@
       </Unit15>
       <Unit16>
         <Filename Value="readthread.pas"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
-        <TopLine Value="115"/>
-        <CursorPos X="14" Y="134"/>
-        <UsageCount Value="14"/>
+        <CursorPos X="41" Y="8"/>
+        <UsageCount Value="15"/>
         <Loaded Value="True"/>
       </Unit16>
       <Unit17>
         <Filename Value="callstack.pas"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="6"/>
         <CursorPos X="47" Y="10"/>
-        <UsageCount Value="14"/>
+        <UsageCount Value="15"/>
         <Loaded Value="True"/>
       </Unit17>
       <Unit18>
         <Filename Value="logoutput.pas"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="7"/>
         <TopLine Value="7"/>
         <CursorPos Y="27"/>
-        <UsageCount Value="14"/>
+        <UsageCount Value="15"/>
         <Loaded Value="True"/>
       </Unit18>
       <Unit19>
@@ -212,128 +211,136 @@
         <UsageCount Value="11"/>
         <Loaded Value="True"/>
       </Unit20>
+      <Unit21>
+        <Filename Value="..\..\..\ultibo\core\fpc\source\rtl\ultibo\core\threads.pas"/>
+        <UnitName Value="Threads"/>
+        <EditorIndex Value="5"/>
+        <TopLine Value="24000"/>
+        <CursorPos X="29" Y="24018"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit21>
     </Units>
-    <OtherDefines Count="2">
-      <Define0 Value="ZERO"/>
-      <Define1 Value="lcd"/>
+    <OtherDefines Count="1">
+      <Define0 Value="RPI3"/>
     </OtherDefines>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="speeduinomessagehandler.pas"/>
-        <Caret Line="125" Column="22" TopLine="102"/>
+        <Filename Value="speedylogger.lpr"/>
+        <Caret Line="139" Column="26" TopLine="120"/>
       </Position1>
       <Position2>
-        <Filename Value="speeduinomessagehandler.pas"/>
-        <Caret Line="224" Column="37" TopLine="201"/>
+        <Filename Value="speedylogger.lpr"/>
+        <Caret Line="15" TopLine="15"/>
       </Position2>
       <Position3>
         <Filename Value="speeduinomessagehandler.pas"/>
-        <Caret Line="226" Column="22" TopLine="203"/>
+        <Caret Line="590" Column="38" TopLine="573"/>
       </Position3>
       <Position4>
         <Filename Value="speeduinomessagehandler.pas"/>
-        <Caret Line="244" Column="17" TopLine="221"/>
+        <Caret Line="21" Column="20"/>
       </Position4>
       <Position5>
         <Filename Value="speeduinomessagehandler.pas"/>
-        <Caret Line="289" Column="43" TopLine="266"/>
       </Position5>
       <Position6>
-        <Filename Value="speeduinomessagehandler.pas"/>
-        <Caret Line="291" Column="17" TopLine="268"/>
-      </Position6>
-      <Position7>
-        <Filename Value="speeduinomessagehandler.pas"/>
-        <Caret Line="354" Column="15" TopLine="332"/>
-      </Position7>
-      <Position8>
-        <Filename Value="speeduinomessagehandler.pas"/>
-        <Caret Line="508" Column="52" TopLine="491"/>
-      </Position8>
-      <Position9>
-        <Filename Value="speeduinomessagehandler.pas"/>
-      </Position9>
-      <Position10>
-        <Filename Value="speeduinomessagehandler.pas"/>
-        <Caret Line="95" Column="31" TopLine="73"/>
-      </Position10>
-      <Position11>
-        <Filename Value="speeduinomessagehandler.pas"/>
-        <Caret Line="354" Column="24" TopLine="332"/>
-      </Position11>
-      <Position12>
-        <Filename Value="speedylogger.lpr"/>
-        <Caret Line="139" Column="26" TopLine="120"/>
-      </Position12>
-      <Position13>
-        <Filename Value="speedylogger.lpr"/>
-        <Caret Line="15" TopLine="15"/>
-      </Position13>
-      <Position14>
-        <Filename Value="speeduinomessagehandler.pas"/>
-        <Caret Line="590" Column="38" TopLine="573"/>
-      </Position14>
-      <Position15>
-        <Filename Value="speeduinomessagehandler.pas"/>
-        <Caret Line="21" Column="20"/>
-      </Position15>
-      <Position16>
-        <Filename Value="speeduinomessagehandler.pas"/>
-      </Position16>
-      <Position17>
         <Filename Value="speedylogger.lpr"/>
         <Caret Line="142" Column="82" TopLine="137"/>
-      </Position17>
-      <Position18>
+      </Position6>
+      <Position7>
         <Filename Value="speedylogger.lpr"/>
         <Caret Line="67" Column="30" TopLine="43"/>
-      </Position18>
-      <Position19>
+      </Position7>
+      <Position8>
         <Filename Value="speedylogger.lpr"/>
         <Caret Line="236" TopLine="209"/>
+      </Position8>
+      <Position9>
+        <Filename Value="speedylogger.lpr"/>
+        <Caret Line="67" Column="23" TopLine="55"/>
+      </Position9>
+      <Position10>
+        <Filename Value="speedylogger.lpr"/>
+        <Caret Line="186" Column="14" TopLine="168"/>
+      </Position10>
+      <Position11>
+        <Filename Value="..\..\..\ultibo\core\fpc\source\rtl\ultibo\core\ultibo.pas"/>
+        <Caret Line="1450" Column="74" TopLine="1436"/>
+      </Position11>
+      <Position12>
+        <Filename Value="..\..\..\ultibo\core\fpc\source\rtl\ultibo\core\ultibo.pas"/>
+        <Caret Line="583" Column="36" TopLine="569"/>
+      </Position12>
+      <Position13>
+        <Filename Value="..\..\..\ultibo\core\fpc\source\rtl\ultibo\core\ultibo.pas"/>
+        <Caret Line="577" Column="43" TopLine="565"/>
+      </Position13>
+      <Position14>
+        <Filename Value="..\..\..\ultibo\core\fpc\source\rtl\ultibo\core\ultibo.pas"/>
+      </Position14>
+      <Position15>
+        <Filename Value="..\..\..\ultibo\core\fpc\source\rtl\ultibo\core\ultibo.pas"/>
+        <Caret Line="1112" Column="24" TopLine="1089"/>
+      </Position15>
+      <Position16>
+        <Filename Value="..\..\..\ultibo\core\fpc\source\rtl\ultibo\core\ultibo.pas"/>
+        <Caret Line="1185" Column="54" TopLine="1162"/>
+      </Position16>
+      <Position17>
+        <Filename Value="..\..\..\ultibo\core\fpc\source\rtl\ultibo\core\ultibo.pas"/>
+        <Caret Line="1450" Column="25" TopLine="1427"/>
+      </Position17>
+      <Position18>
+        <Filename Value="..\..\..\ultibo\core\fpc\source\rtl\ultibo\core\ultibo.pas"/>
+        <Caret Line="1451" Column="25" TopLine="1428"/>
+      </Position18>
+      <Position19>
+        <Filename Value="..\..\..\ultibo\core\fpc\source\rtl\ultibo\core\ultibo.pas"/>
+        <Caret Line="1452" Column="25" TopLine="1429"/>
       </Position19>
       <Position20>
         <Filename Value="speedylogger.lpr"/>
-        <Caret Line="67" Column="23" TopLine="55"/>
+        <Caret Line="177" Column="23" TopLine="168"/>
       </Position20>
       <Position21>
         <Filename Value="speedylogger.lpr"/>
-        <Caret Line="186" Column="14" TopLine="168"/>
+        <Caret Line="48" Column="6" TopLine="40"/>
       </Position21>
       <Position22>
-        <Filename Value="..\..\..\ultibo\core\fpc\source\rtl\ultibo\core\ultibo.pas"/>
-        <Caret Line="1450" Column="74" TopLine="1436"/>
+        <Filename Value="speedylogger.lpr"/>
+        <Caret Line="36" Column="27" TopLine="16"/>
       </Position22>
       <Position23>
-        <Filename Value="..\..\..\ultibo\core\fpc\source\rtl\ultibo\core\ultibo.pas"/>
-        <Caret Line="583" Column="36" TopLine="569"/>
+        <Filename Value="speedylogger.lpr"/>
+        <Caret Line="21" Column="79"/>
       </Position23>
       <Position24>
-        <Filename Value="..\..\..\ultibo\core\fpc\source\rtl\ultibo\core\ultibo.pas"/>
-        <Caret Line="577" Column="43" TopLine="565"/>
+        <Filename Value="readthread.pas"/>
+        <Caret Line="134" Column="14" TopLine="115"/>
       </Position24>
       <Position25>
-        <Filename Value="..\..\..\ultibo\core\fpc\source\rtl\ultibo\core\ultibo.pas"/>
+        <Filename Value="readthread.pas"/>
+        <Caret Line="110" Column="29" TopLine="97"/>
       </Position25>
       <Position26>
-        <Filename Value="..\..\..\ultibo\core\fpc\source\rtl\ultibo\core\ultibo.pas"/>
-        <Caret Line="1112" Column="24" TopLine="1089"/>
+        <Filename Value="..\..\..\ultibo\core\fpc\source\rtl\ultibo\core\threads.pas"/>
       </Position26>
       <Position27>
-        <Filename Value="..\..\..\ultibo\core\fpc\source\rtl\ultibo\core\ultibo.pas"/>
-        <Caret Line="1185" Column="54" TopLine="1162"/>
+        <Filename Value="..\..\..\ultibo\core\fpc\source\rtl\ultibo\core\threads.pas"/>
+        <Caret Line="2095" Column="29" TopLine="2072"/>
       </Position27>
       <Position28>
-        <Filename Value="..\..\..\ultibo\core\fpc\source\rtl\ultibo\core\ultibo.pas"/>
-        <Caret Line="1450" Column="25" TopLine="1427"/>
+        <Filename Value="..\..\..\ultibo\core\fpc\source\rtl\ultibo\core\threads.pas"/>
+        <Caret Line="2237" Column="42" TopLine="2214"/>
       </Position28>
       <Position29>
-        <Filename Value="..\..\..\ultibo\core\fpc\source\rtl\ultibo\core\ultibo.pas"/>
-        <Caret Line="1451" Column="25" TopLine="1428"/>
+        <Filename Value="readthread.pas"/>
+        <Caret Line="8" Column="26"/>
       </Position29>
       <Position30>
-        <Filename Value="..\..\..\ultibo\core\fpc\source\rtl\ultibo\core\ultibo.pas"/>
-        <Caret Line="1452" Column="25" TopLine="1429"/>
+        <Filename Value="readthread.pas"/>
+        <Caret Line="109" Column="35" TopLine="87"/>
       </Position30>
     </JumpHistory>
   </ProjectSession>
