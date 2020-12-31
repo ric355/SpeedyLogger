@@ -100,7 +100,7 @@ Note that the latest release moves the location of the datalogs from the root di
 Contributing or Changing the source
 ===================================
 
-SpeedyLogger is built with the Ultibo platform. Please see www.ultibo.org for further details on this system. It uses Lazarus as the development environment, which is available on both Windows and Linux. The lazarus implementation is specific to Ultibo as it has some Ultibo specific extensions. On Windows there is an installer which will get you up and running quickly, but on Linux the environment must be compiled from source. On my Ubuntu installation I was unable to get this to work due to the need for some missing 32 bit tools which I could not find, so the current recommendation is to use Windows as the developnent environment.   If anyone has success getting Linux up and running do please let me know how! You may have some luck with help on the Ultibo forums should you need it (I have not asked, I just took the path of least resistance and used Windows!).
+SpeedyLogger is built with the Ultibo platform. Please see www.ultibo.org for further details on this system. It uses Lazarus as the development environment, which is available on both Windows and Linux. The lazarus implementation is specific to Ultibo as it has some Ultibo specific extensions.
 
 
 What is Speeduino
