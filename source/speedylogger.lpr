@@ -145,6 +145,7 @@ begin
     // oterwise if maxlogfiles is defined, we delete until we are back under the limit.
     while (FileList.Count > MaxLogFiles) do
     begin
+      log('Deleting file ' + FileList[0]);
       SysUtils.DeleteFile('c:\datalogs\'+FileList[0]);
       FileList.Delete(0);
     end;
