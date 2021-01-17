@@ -61,11 +61,14 @@ var
   led : TLEDThread;
   iniFile : TIniFile;
   webenabled : string;
-  xpos, ypos : longword;
+  ypos : longword;
   currentbuttonticks : qword = 0;
   lastbuttonticks : qword = 0;
   commsretries : qword = 0;
   shellpath : string;
+  InfoWindowHandle : THandle;
+
+
 
 
 procedure InitWebServer;
@@ -129,22 +132,22 @@ begin
   // for debug purposes so it doesn't matter.
   with SpeeduinoMsg.RTStatus do
   begin
-    ConsoleWindowWriteEx(WindowHandle, 'secl          : ' + inttostr(secl) + '    ',
+    ConsoleWindowWriteEx(InfoWindowHandle, 'secl          : ' + inttostr(secl) + '    ',
        1, ypos, COLOR_BLACK, COLOR_WHITE);
-    ConsoleWindowWriteEx(WindowHandle, 'rpm           : ' + inttostr(rpmhi * 256 + rpmlo) + '    ',
+    ConsoleWindowWriteEx(InfoWindowHandle, 'rpm           : ' + inttostr(rpmhi * 256 + rpmlo) + '    ',
        1, ypos + 1, COLOR_BLACK, COLOR_WHITE);
-    ConsoleWindowWriteEx(WindowHandle, 'TPS           : ' + inttostr(tps) + '    ',
+    ConsoleWindowWriteEx(InfoWindowHandle, 'TPS           : ' + inttostr(tps) + '    ',
        1, ypos + 2, COLOR_BLACK, COLOR_WHITE);
-    ConsoleWindowWriteEx(WindowHandle, 'MAP           : ' + inttostr(maphi * 256 + maplo) + '    ',
+    ConsoleWindowWriteEx(InfoWindowHandle, 'MAP           : ' + inttostr(maphi * 256 + maplo) + '    ',
        1, ypos + 3, COLOR_BLACK, COLOR_WHITE);
-    ConsoleWindowWriteEx(WindowHandle, 'VE            : ' + inttostr(ve) + '    ',
+    ConsoleWindowWriteEx(InfoWindowHandle, 'VE            : ' + inttostr(ve) + '    ',
        1, ypos + 4, COLOR_BLACK, COLOR_WHITE);
-    ConsoleWindowWriteEx(WindowHandle, 'Advance       : ' + inttostr(advance) + '    ',
+    ConsoleWindowWriteEx(InfoWindowHandle, 'Advance       : ' + inttostr(advance) + '    ',
        1, ypos + 5, COLOR_BLACK, COLOR_WHITE);
-    ConsoleWindowWriteEx(WindowHandle, 'Comms Retries : ' + inttostr(commsretries) + '    ',
+    ConsoleWindowWriteEx(InfoWindowHandle, 'Comms Retries : ' + inttostr(commsretries) + '    ',
        1, ypos + 5, COLOR_BLACK, COLOR_WHITE);
   end;
-  LED.Rate := 250;
+  LED.Rate := 750;
 
 end;
 
@@ -163,13 +166,17 @@ begin
   GPIOInputEvent(GPIO_PIN_23,GPIO_TRIGGER_LOW,INFINITE,@addlogfilemarker,nil);
 end;
 
+
 begin
   LED := TLEDThread.Create;
   LED.FreeonTerminate := true;
 
   ConsoleActivated := true;
 
-  WindowHandle:=ConsoleWindowCreate(ConsoleDeviceGetDefault,CONSOLE_POSITION_FULL,True);
+  WindowHandle:=ConsoleWindowCreate(ConsoleDeviceGetDefault,CONSOLE_POSITION_BOTTOM,True);
+
+  InfoWindowHandle:=ConsoleWindowCreate(ConsoleDeviceGetDefault,CONSOLE_POSITION_TOP,True);
+
 
   //add log file marker button (second from top button)
   GPIOPullSelect(GPIO_PIN_23,GPIO_PULL_UP);
@@ -194,7 +201,8 @@ begin
   shellpath := inifile.ReadString('general', 'shellupdatelocalpath', '');
   if (shellpath <> '') then
     SHELL_UPDATE_LOCAL_PATH := shellpath;
-  ConsoleWindowGetCursorXY(WindowHandle, xpos, ypos);
+
+  ypos := 1;
 
   while true do
   begin
