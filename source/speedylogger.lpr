@@ -241,7 +241,12 @@ begin
 
     end;
 
-    SpeeduinoMsg.Free;
+    try
+      SpeeduinoMsg.Free;
+    except
+      on e : exception do
+        log('Exception on message free : ' + e.message);
+    end;
 
     sleep(100);
   end;
