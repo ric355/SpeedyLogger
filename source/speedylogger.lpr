@@ -69,6 +69,89 @@ var
   InfoWindowHandle : THandle;
 
 
+procedure logfiletidy;
+var
+  f : longint;
+  SearchRec : TRawbyteSearchRec;
+  FileList : TStringList;
+  MaxLogFiles : integer;
+  MinFreeSpace : QWord;
+begin
+  {
+  Look at the log files and delete any until the amount of free disk space we have is
+  more than the configured Mb. Delete oldest first using the filename sorted as the
+  ids are numeric.
+
+  There are now two options:
+     - keepfreemb - defines a number of mb to keep free - files deleted until
+                                                   this amount is available.
+     - maxlogfiles - defines a count of the number of files allowed at once.
+                   files will be deleted until maxlogfiles-1 files are left, ready
+                   for the next one to be created when logging starts.
+
+    if both are defined, keepfreemb takes priority and maxlogfiles is ignored.
+  }
+
+  Log('Tidying up log files');
+
+  MinFreeSpace := iniFile.ReadInteger('general', 'keepfreemb', 0);
+  if (MinFreeSpace = 0) then
+  begin
+    log('keepfreemb not defined; testing for maxlogfiles');
+    MaxLogFiles := iniFile.ReadInteger('general', 'maxlogfiles', 0);
+    if (MaxLogFiles = 0) then
+    begin
+      log('maxlogfiles is not configured - not doing any file deletion.');
+      exit;
+    end;
+    log('Max log files = ' +inttostr(MaxLogFiles));
+  end
+  else
+  begin
+    log('keepfreemb = ' + inttostr(MinFreeSpace) + 'Mb');
+    MinFreeSpace := MinFreeSpace * 1024 * 1024;   // convert to bytes
+  end;
+
+  FileList := TStringList.Create;
+  FileList.Sorted:=true;
+
+  // find all files in the datalogs directory. Does *not* include subdirectories.
+  f := FindFirst('c:\datalogs\*.msl', 0, SearchRec);
+  while (f <> -1) do
+  begin
+    FileList.Add(SearchRec.Name);
+    f := FindNext(SearchRec);
+  end;
+
+  log('There are ' + inttostr(FileList.Count) + ' log files in the datalogs folder.');
+  if (MinFreeSpace > 0) then
+  begin
+    // if minfreespace is defined, we delete files until we have at least minfreespace mb free
+    log('Current free space on disk = '+ inttostr(SysUtils.DiskFree(0) div 1024 div 1024) + 'Mb');
+
+    while (SysUtils.DiskFree(0) < MinFreeSpace) and (filelist.count > 0) do
+    begin
+      log('Deleting file ' + filelist[0]);
+      SysUtils.DeleteFile('c:\datalogs\'+FileList[0]);
+      FileList.Delete(0);
+      log('Free space is now ' + inttostr(sysutils.diskfree(0)));
+    end;
+
+    if (SysUtils.DiskFree(0) < MinFreeSpace) then
+      log('Warning: Could not free up enough space on this drive!');
+  end
+  else
+  begin
+    // oterwise if maxlogfiles is defined, we delete until we are back under the limit.
+    while (FileList.Count > MaxLogFiles) do
+    begin
+      SysUtils.DeleteFile('c:\datalogs\'+FileList[0]);
+      FileList.Delete(0);
+    end;
+  end;
+
+  log('Log file tidying completed. Free space='+inttostr(SysUtils.DiskFree(0) div 1024 div 1024) + 'Mb');
+end;
 
 
 procedure InitWebServer;
@@ -201,6 +284,10 @@ begin
   shellpath := inifile.ReadString('general', 'shellupdatelocalpath', '');
   if (shellpath <> '') then
     SHELL_UPDATE_LOCAL_PATH := shellpath;
+
+  LogFileTidy;
+
+  inifile.Free;
 
   ypos := 1;
 
