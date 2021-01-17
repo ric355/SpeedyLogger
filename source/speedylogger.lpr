@@ -65,6 +65,7 @@ var
   currentbuttonticks : qword = 0;
   lastbuttonticks : qword = 0;
   commsretries : qword = 0;
+  shellpath : string;
 
 
 procedure InitWebServer;
@@ -190,6 +191,9 @@ begin
   if (webenabled = '1') then
     initwebserver;
 
+  shellpath := inifile.ReadString('general', 'shellupdatelocalpath', '');
+  if (shellpath <> '') then
+    SHELL_UPDATE_LOCAL_PATH := shellpath;
   ConsoleWindowGetCursorXY(WindowHandle, xpos, ypos);
 
   while true do
