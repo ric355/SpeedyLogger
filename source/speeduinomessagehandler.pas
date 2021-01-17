@@ -213,8 +213,6 @@ end;
 procedure TComPortReadThread.WriteData(data: string);
 var
   Count3 : Longword;
-  writebuf : array[1..10] of byte;
-  i : integer;
 begin
   Count3 := 0;
   if (SerialWrite(PChar(data),Length(data),Count3) <> ERROR_SUCCESS) then
@@ -324,9 +322,6 @@ begin
 end;
 
 procedure TSpeeduinoMessageHandler.OnRecordAvailable(recP : pchar; bufsize : integer);
-var
-  i : integer;
-  str : string;
 begin
   try
     SpinLock(FMsgTimeSpin);

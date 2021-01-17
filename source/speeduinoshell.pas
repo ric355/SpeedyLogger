@@ -77,7 +77,6 @@ end;
 
 function TSpeeduinoShellCommand.DoCommand(AShell:TShell;ASession:TShellSession;AParameters:TStrings):Boolean;
 var
- Value:String;
  Parameter:String;
  ini: TIniFile;
 begin
@@ -87,13 +86,10 @@ begin
 
  if AShell = nil then Exit;
 
- Value:=' ';
-
  //Get the parameter (if any)
  Parameter:=AShell.ParameterIndex(0,AParameters);
  if Length(Parameter) > 0 then
   begin
-   Value:=' ' + Parameter + ' ';
    if (upcase(Parameter) = 'PAUSE') then
      begin
       //stop logging

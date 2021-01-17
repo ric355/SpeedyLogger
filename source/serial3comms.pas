@@ -144,7 +144,7 @@ end;
 procedure TComPortReadThread.ReadData;
 var
   ResultCode : integer;
-  Count : LongWord;
+  Count : LongWord = 0;
 begin
    ResultCode:=SerialDeviceRead(SerialDeviceGetDefault,FUpdateBufferP,
                      FRecordSize - FBytesRead,SERIAL_READ_NON_BLOCK,
