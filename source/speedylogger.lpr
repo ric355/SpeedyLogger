@@ -298,6 +298,7 @@ begin
     //create the handler thread
 
     log('Create message handler');
+    LED.Rate := 750;
     SpeeduinoMsg := TComPortReadThread.Create;
 
     //uncomment this line if you want to see data on the console. You
