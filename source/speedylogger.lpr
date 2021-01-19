@@ -250,6 +250,45 @@ begin
   GPIOInputEvent(GPIO_PIN_23,GPIO_TRIGGER_LOW,INFINITE,@addlogfilemarker,nil);
 end;
 
+procedure DumpCallStack;
+var
+  I: Longint;
+  prevbp: Pointer;
+  CallerFrame,
+  CallerAddress,
+  bp: Pointer;
+  Report: string;
+const
+  MaxDepth = 20;
+begin
+  Report := '';
+  bp := get_frame;
+  // This trick skip SendCallstack item
+  // bp:= get_caller_frame(get_frame);
+  try
+    prevbp := bp - 1;
+    I := 0;
+    while bp > prevbp do begin
+       CallerAddress := get_caller_addr(bp);
+       CallerFrame := get_caller_frame(bp);
+       if (CallerAddress = nil) then
+         Break;
+       Report := Report + BackTraceStrFunc(CallerAddress) + LineEnding;
+       Inc(I);
+       if (I >= MaxDepth) or (CallerFrame = nil) then
+         Break;
+       prevbp := bp;
+       bp := CallerFrame;
+     end;
+   except
+     { prevent endless dump if an exception occured }
+   end;
+  log(Report);
+end;
+
+
+var
+  counter : integer = 0;
 
 begin
   LED := TLEDThread.Create;
@@ -292,6 +331,7 @@ begin
 
   ypos := 1;
 
+  try
   while true do
   begin
 
@@ -312,6 +352,7 @@ begin
     //the thread will re-request data automatically until terminated or paused.
 
     SpeeduinoMsg.StartLogging;
+    log('startlogging call returned');
     cmd.speedymessage := SpeeduinoMsg;
 
     while (not SpeeduinoMsg.Terminated) do
@@ -322,10 +363,18 @@ begin
 
       if (SpeeduinoMsg.timeoflastmessage + 2000 < gettickcount64) and (not SpeeduinoMsg.IsPaused) then
       begin
-        SpeeduinoMsg.EndLogging;
-        SpeeduinoMsg.Terminate;
+        // just resend the request. Don't need to dispose of handler.
+        SpeeduinoMsg.StartLogging;
+
         commsretries := commsretries + 1;
         LED.Rate := 100;
+      end;
+
+      inc(counter);
+      if (counter > 300) then  // every 30 seconds
+      begin
+        log('main thread active');
+        counter := 0;
       end;
 
     end;
@@ -338,6 +387,16 @@ begin
     end;
 
     sleep(100);
+  end;
+
+  except
+    on e : exception do
+    begin
+      log('Exception in main thread : ' + e.message);
+      DumpCallStack;
+    end;
+
+
   end;
 end.
 
