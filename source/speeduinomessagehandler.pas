@@ -76,7 +76,7 @@ type
     FByteCount : integer;
     filenumber : integer;
     FLogStartTime : Integer;
-    Ftimeoflastmessage : longint;
+    Ftimeoflastmessage : qword;
     FStreamCS : TRTLCriticalSection;
     FMarkNumber : Word;
     FMarkerRequested : Boolean;
@@ -86,7 +86,7 @@ type
     function GetByteCount : Longint;
     function GetFilename : string;
     function GetFileSizeStr : string;
-    function GetTimeOfLastMessage : longint;
+    function GetTimeOfLastMessage : qword;
   public
     rtStatus : TRealTimeStatus;
     DataIsReady : procedure;
@@ -105,7 +105,7 @@ type
     procedure RequestMarker;
     procedure SendTimeUpdate; virtual;
     property IsPaused : boolean read FLoggingPaused;
-    property TimeOfLastMessage : Integer read GetTimeOfLastMessage;
+    property TimeOfLastMessage : qword read GetTimeOfLastMessage;
     property ByteCount : longint read GetByteCount;
     property OutputFilename : string read GetFilename;
     property FileSizeStr : string read GetFileSizeStr;
@@ -310,7 +310,7 @@ begin
   Result := FByteCount;
 end;
 
-function TSpeeduinoMessageHandler.GetTimeOfLastMessage : longint;
+function TSpeeduinoMessageHandler.GetTimeOfLastMessage : qword;
 begin
   try
     SpinLock(FMsgTimeSpin);
@@ -646,6 +646,7 @@ begin
   log('Starting logging');
   FLoggingEnabled := true;
   FLoggingPaused := False;
+  Ftimeoflastmessage:= GetTickCount64;
   RequestFullImage;
 end;
 

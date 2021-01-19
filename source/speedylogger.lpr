@@ -320,7 +320,7 @@ begin
 
       // in case the connection is dropped, we have a 2s timeout.
 
-      if (SpeeduinoMsg.timeoflastmessage < (gettickcount - 2000)) and (not SpeeduinoMsg.IsPaused) then
+      if (SpeeduinoMsg.timeoflastmessage + 2000 < gettickcount64) and (not SpeeduinoMsg.IsPaused) then
       begin
         SpeeduinoMsg.EndLogging;
         SpeeduinoMsg.Terminate;
