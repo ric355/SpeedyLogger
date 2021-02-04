@@ -55,13 +55,8 @@ uses
 
 var
   SpeeduinoMsg : TSpeeduinoMessageHandler;
-  IPAddress : String;
-  HTTPListener : THTTPListener;
-  HTTPFolder : THTTPFolder;
-  Winsock2TCPClient : TWinsock2TCPClient;
   led : TLEDThread;
   iniFile : TIniFile;
-  webenabled : string;
   ypos : longword;
   currentbuttonticks : qword = 0;
   lastbuttonticks : qword = 0;
@@ -155,59 +150,6 @@ begin
   log('Log file tidying completed. Free space='+inttostr(SysUtils.DiskFree(0) div 1024 div 1024) + 'Mb');
 end;
 
-
-procedure InitWebServer;
-begin
-  // the web server can be enabled by changing the ini file
-  // see the datalog command on the console.
-  // Once enabled, you can download the data logs
-  // via your browser, but you won't be able to download the file that is currently
-  // being written to.
-  // You obviously need a network connection for this to work, so it's only useful
-  // for bench testing.
-  // WiFI is NOT supported.
-  // It is not recommended that this be enabled when the pi is running on a vehicle
-
-  Winsock2TCPClient:=TWinsock2TCPClient.Create;
-
-  Log('Host name is ' + Winsock2TCPClient.LocalHost);
-
-  IPAddress:=Winsock2TCPClient.LocalAddress;
-
-  // wait for IP address to be assigned, then bind the web server to it
-
-  if (IPAddress = '') or (IPAddress = '0.0.0.0') or (IPAddress = '255.255.255.255') then
-   begin
-    Log('IP address is ' + IPAddress);
-    Log('Waiting for a valid IP address, make sure the network is connected');
-
-    while (IPAddress = '') or (IPAddress = '0.0.0.0') or (IPAddress = '255.255.255.255') do
-     begin
-      Sleep(10);
-
-      IPAddress:=Winsock2TCPClient.LocalAddress;
-     end;
-   end;
-
-  Log('IP address is ' + IPAddress);
-
-  Log('Creating HTTP listener');
-  HTTPListener:=THTTPListener.Create;
-
-  HTTPListener.Active:=True;
-
-  Log('Creating HTTP folder / for C:\');
-  HTTPFolder:=THTTPFolder.Create;
-  HTTPFolder.Name:='/';
-  HTTPFolder.Folder:='C:\';
-
-  Log('Registering HTTP folder');
-  HTTPListener.RegisterDocument('',HTTPFolder);
-
-  Log('Web Server ready, point your browser to http://' + Winsock2TCPClient.LocalAddress + '/');
-
-  Winsock2TCPClient.Free;
-end;
 
 procedure DebugUpdateMessage;
 
@@ -318,9 +260,6 @@ begin
     CreateDirectory('c:\datalogs', nil);
 
   iniFile := TIniFile.Create('c:\speedylog.ini');
-  webenabled := iniFile.ReadString('webserver', 'enabled', '0');
-  if (webenabled = '1') then
-    initwebserver;
 
   shellpath := inifile.ReadString('general', 'shellupdatelocalpath', '');
   if (shellpath <> '') then
