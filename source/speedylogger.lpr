@@ -292,7 +292,6 @@ begin
     //the thread will re-request data automatically until terminated or paused.
 
     SpeeduinoMsg.StartLogging;
-    log('startlogging call returned');
     cmd.speedymessage := SpeeduinoMsg;
 
     while (not SpeeduinoMsg.Terminated) do
