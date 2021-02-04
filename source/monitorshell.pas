@@ -42,7 +42,7 @@ var
 implementation
 
 uses
-  remoteshell,
+  RemoteShell,
   services,
   strutils,
   winsock2,

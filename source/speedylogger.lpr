@@ -3,6 +3,7 @@ program SpeedyLogger;
 {$mode objfpc}{$H+}
 
 uses
+  initunit,
   {$ifdef RPI1}
   RaspberryPi,
   BCM2835,
